@@ -16,21 +16,21 @@ export class MainArticleService {
     try {
       const mainArticle = this.mainArticleRepository.create(mainArticleData);
       await this.mainArticleRepository.save(mainArticle);
-      return mainArticle;
-    } catch (error) {
-      if (error.code === '23505') { // Código de error específico para conflictos (ej. duplicados)
-        throw new BadRequestException({
+      const mainArticleToFind = this.findOne(mainArticle.id)
+      if (!mainArticleToFind) {
+        throw new NotFoundException({
           message: 'Error al crear el Articulo Principal.',
           error: 'Bad Request',
           statusCode: 400
         });
-      } else {
-        throw new InternalServerErrorException({
-          message: error.message,
-          error: error.response.error,
-          statusCode: error.status
-        });
       }
+      return mainArticle;
+    } catch (error) {
+      throw new InternalServerErrorException({
+        message: error.message,
+        error: error.response.error,
+        statusCode: error.status
+      });
     }
   }
 

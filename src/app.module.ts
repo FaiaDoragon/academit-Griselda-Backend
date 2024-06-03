@@ -9,6 +9,8 @@ import { ArticlesModule } from './articles/articles.module';
 import { Article } from './articles/entities/article.entity';
 import { MainArticleModule } from './main-article/main-article.module';
 import { MainArticle } from './main-article/entities/main-article.entity';
+import { NewArticleModule } from './new-article/new-article.module';
+import { NewArticle } from './new-article/entities/new-article.entity';
 
 @Module({
   imports: [
@@ -22,7 +24,7 @@ import { MainArticle } from './main-article/entities/main-article.entity';
         username: configService.get<string>('DB_USERNAME'),
         password: configService.get<string>('DB_PASSWORD'),
         database: configService.get<string>('DB_NAME'),
-        entities: [Header, Article, MainArticle],
+        entities: [Header, Article, MainArticle, NewArticle],
         synchronize: true, // No usar en producción, puede perder datos
       }),
     }),
@@ -32,6 +34,7 @@ import { MainArticle } from './main-article/entities/main-article.entity';
     ArticlesModule,
     HeadersModule,
     MainArticleModule,
+    NewArticleModule,
   ],
   controllers: [AppController],
   providers: [AppService],

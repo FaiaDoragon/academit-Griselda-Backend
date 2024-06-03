@@ -20,7 +20,7 @@ export class HeadersService {
       if (!item) {
         throw new NotFoundException({
           message: 'Error al crear el Header.',
-          error: 'Not Created',
+          error: 'Bad Request',
           statusCode: 400
         });
       }

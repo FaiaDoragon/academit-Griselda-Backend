@@ -1,21 +1,18 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity('main_article', { schema: 'academit_DB' })
-export class MainArticle {
+@Entity('new_article', { schema: 'academit_DB' })
+export class NewArticle {
     @PrimaryGeneratedColumn({ type: 'int', name: 'id' })
     id: number;
 
-    @Column('varchar', { name: 'titulo', length: 100 })
-    title: string;
+    @Column('varchar', { name: 'titulo_seccion', length: 100 })
+    sectiontitle: string;
+
+    @Column('varchar', { name: 'titulo_articulo', length: 100 })
+    articletitle: string;
 
     @Column('varchar', { name: 'descripcion', length: 100 })
     description: string;
-
-    @Column('varchar', { name: 'textoBoton', length: 100 })
-    textButton: string;
-
-    @Column('varchar', { name: 'imagen', nullable: true })
-    image: Buffer;
 
     @Column('date', { name: 'created_at', nullable: true })
     createdAt: Date = new Date();
@@ -23,3 +20,4 @@ export class MainArticle {
     @Column('date', { name: 'updated_at', nullable: true })
     updatedAt: Date = new Date();
 }
+

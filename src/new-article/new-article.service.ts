@@ -1,30 +1,30 @@
 import { Injectable, NotFoundException, InternalServerErrorException, BadRequestException } from '@nestjs/common';
-import { CreateArticleDto } from './dto/create-article.dto';
-import { UpdateArticleDto } from './dto/update-article.dto';
+import { CreateNewArticleDto } from './dto/create-new-article.dto';
+import { UpdateNewArticleDto } from './dto/update-new-article.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Article } from './entities/article.entity';
 import { Repository } from 'typeorm';
+import { NewArticle } from './entities/new-article.entity';
 
 @Injectable()
-export class ArticlesService {
+export class NewArticleService {
   constructor(
-    @InjectRepository(Article)
-    private articleRepository: Repository<Article>,
+    @InjectRepository(NewArticle)
+    private newArticleRepository: Repository<NewArticle>,
   ) { }
 
-  async create(createArticleDto: CreateArticleDto): Promise<Article> {
+  async create(createNewArticleDto: CreateNewArticleDto): Promise<NewArticle> {
     try {
-      const article = this.articleRepository.create(createArticleDto);
-      await this.articleRepository.save(article);
-      const articleToFind = await this.findOne(article.id)
-      if (!articleToFind) {
+      const newArticle = this.newArticleRepository.create(createNewArticleDto);
+      await this.newArticleRepository.save(newArticle);
+      const newArticleToFind = await this.findOne(newArticle.id)
+      if (!newArticleToFind) {
         throw new NotFoundException({
           message: 'No se creo el articulo.',
           error: 'Bad Request',
           statusCode: 400
         });
       }
-      return article;
+      return newArticle;
     } catch (error) {
       throw new InternalServerErrorException({
         message: error.message,
@@ -34,17 +34,17 @@ export class ArticlesService {
     }
   }
 
-  async findAll(): Promise<Article[]> {
+  async findAll(): Promise<NewArticle[]> {
     try {
-      const articles = await this.articleRepository.find();
-      if (articles.length === 0) {
+      const newArticles = await this.newArticleRepository.find();
+      if (newArticles.length === 0) {
         throw new NotFoundException({
-          message: 'No se encontraron artículos.',
+          message: 'No se encontraron nuevos artículos.',
           error: 'Not Found',
           statusCode: 404
         });
       }
-      return articles;
+      return newArticles;
     } catch (error) {
       throw new InternalServerErrorException({
         message: error.message,
@@ -54,17 +54,17 @@ export class ArticlesService {
     }
   }
 
-  async findOne(id: number): Promise<Article> {
+  async findOne(id: number): Promise<NewArticle> {
     try {
-      const article = await this.articleRepository.findOne({ where: { id } });
-      if (!article) {
+      const newArticle = await this.newArticleRepository.findOne({ where: { id } });
+      if (!newArticle) {
         throw new NotFoundException({
-          message: `El artículo con el ID ${id} no se encontró.`,
+          message: `El nuevo artículo con el ID ${id} no se encontró.`,
           error: 'Not Found',
           statusCode: 404
         });
       }
-      return article;
+      return newArticle;
     } catch (error) {
       throw new InternalServerErrorException({
         message: error.message,
@@ -74,18 +74,18 @@ export class ArticlesService {
     }
   }
 
-  async update(id: number, updateArticleDto: UpdateArticleDto): Promise<Article> {
+  async update(id: number, updateNewArticleDto: UpdateNewArticleDto): Promise<NewArticle> {
     try {
-      const result = await this.articleRepository.update(id, updateArticleDto);
+      const result = await this.newArticleRepository.update(id, updateNewArticleDto);
       if (result.affected === 0) {
         throw new NotFoundException({
-          message: `El artículo con el ID ${id} no se encontró.`,
+          message: `El nuevo artículo con el ID ${id} no se encontró.`,
           error: 'Not Found',
           statusCode: 404
         });
       }
-      const article = await this.findOne(id);
-      return article;
+      const newArticle = await this.findOne(id);
+      return newArticle;
     } catch (error) {
       throw new InternalServerErrorException({
         message: error.message,
@@ -97,10 +97,10 @@ export class ArticlesService {
 
   async remove(id: number): Promise<void> {
     try {
-      const result = await this.articleRepository.delete(id);
+      const result = await this.newArticleRepository.delete(id);
       if (result.affected === 0) {
         throw new NotFoundException({
-          message: `El artículo con el ID ${id} no se encontró.`,
+          message: `El nuevo artículo con el ID ${id} no se encontró.`,
           error: 'Not Found',
           statusCode: 404
         });
