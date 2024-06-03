@@ -20,13 +20,13 @@ export class HeadersController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.headersService.findOne(+id);
+  findOne(@Param('id') id: number) {
+    return this.headersService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateHeaderDto: UpdateHeaderDto) {
-    return this.headersService.update(+id, updateHeaderDto);
+  update(@Param('id') id: number, @Body() updateHeaderDto: UpdateHeaderDto) {
+    return this.headersService.update(id, updateHeaderDto);
   }
 
   @Delete(':id')
