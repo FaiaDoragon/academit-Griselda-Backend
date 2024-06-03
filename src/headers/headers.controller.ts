@@ -1,16 +1,16 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { HeadersService } from './headers.service';
-import { CreateHeaderDto } from './dto/create-header.dto';
+import { CreateHeaderItemDto } from './dto/create-header.dto';
 import { UpdateHeaderDto } from './dto/update-header.dto';
 import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Headers')
 @Controller('headers')
 export class HeadersController {
-  constructor(private readonly headersService: HeadersService) {}
+  constructor(private readonly headersService: HeadersService) { }
 
   @Post()
-  create(@Body() createHeaderDto: CreateHeaderDto) {
+  create(@Body() createHeaderDto: CreateHeaderItemDto) {
     return this.headersService.create(createHeaderDto);
   }
 

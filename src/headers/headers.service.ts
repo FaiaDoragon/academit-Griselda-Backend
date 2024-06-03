@@ -1,26 +1,39 @@
 import { Injectable } from '@nestjs/common';
-import { CreateHeaderDto } from './dto/create-header.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Header } from './entities/header.entity'
+import { Repository } from 'typeorm';
+import { CreateHeaderItemDto } from './dto/create-header.dto';
 import { UpdateHeaderDto } from './dto/update-header.dto';
 
 @Injectable()
 export class HeadersService {
-  create(createHeaderDto: CreateHeaderDto) {
-    return 'This action adds a new header';
+  constructor(
+    @InjectRepository(Header)
+    private headersRepository: Repository<Header>,
+  ) {}
+
+  async create(itemsData: CreateHeaderItemDto) : Promise<Header> {
+    const items = this.headersRepository.create(itemsData);
+    return await this.headersRepository.save(items);
   }
 
-  findAll() {
-    return `This action returns all headers`;
+  async findAll() : Promise<Header[]> {
+    const items = await this.headersRepository.find()
+    return items
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} header`;
+  async findOne(id: number) : Promise<Header> {
+    const item = await this.headersRepository.findOne({ where: { id } })
+    return item
   }
 
-  update(id: number, updateHeaderDto: UpdateHeaderDto) {
-    return `This action updates a #${id} header`;
+  async update(id: number, updateHeaderDto: UpdateHeaderDto) : Promise<Header> {
+    await this.headersRepository.update(id, updateHeaderDto)
+    return this.findOne(id);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} header`;
+  async remove(id: number): Promise<void> {
+    await this.headersRepository.delete(id);
+    return;
   }
 }
