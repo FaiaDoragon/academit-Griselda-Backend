@@ -7,6 +7,8 @@ import { HeadersModule } from './headers/headers.module';
 import { Header } from './headers/entities/header.entity';
 import { ArticlesModule } from './articles/articles.module';
 import { Article } from './articles/entities/article.entity';
+import { MainArticleModule } from './main-article/main-article.module';
+import { MainArticle } from './main-article/entities/main-article.entity';
 
 @Module({
   imports: [
@@ -20,7 +22,7 @@ import { Article } from './articles/entities/article.entity';
         username: configService.get<string>('DB_USERNAME'),
         password: configService.get<string>('DB_PASSWORD'),
         database: configService.get<string>('DB_NAME'),
-        entities: [Header, Article],
+        entities: [Header, Article, MainArticle],
         synchronize: true, // No usar en producción, puede perder datos
       }),
     }),
@@ -29,6 +31,7 @@ import { Article } from './articles/entities/article.entity';
     }),
     ArticlesModule,
     HeadersModule,
+    MainArticleModule,
   ],
   controllers: [AppController],
   providers: [AppService],

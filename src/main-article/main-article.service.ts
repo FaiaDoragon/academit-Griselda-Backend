@@ -1,0 +1,116 @@
+import { Injectable, NotFoundException, InternalServerErrorException, BadRequestException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { MainArticle } from './entities/main-article.entity';
+import { CreateMainArticleDto } from './dto/create-main-article.dto';
+import { UpdateArticleDto } from 'src/articles/dto/update-article.dto';
+
+@Injectable()
+export class MainArticleService {
+  constructor(
+    @InjectRepository(MainArticle)
+    private mainArticleRepository: Repository<MainArticle>,
+  ) { }
+
+  async create(mainArticleData: CreateMainArticleDto): Promise<MainArticle> {
+    try {
+      const mainArticle = this.mainArticleRepository.create(mainArticleData);
+      await this.mainArticleRepository.save(mainArticle);
+      return mainArticle;
+    } catch (error) {
+      if (error.code === '23505') { // Código de error específico para conflictos (ej. duplicados)
+        throw new BadRequestException({
+          message: 'Error al crear el Articulo Principal.',
+          error: 'Bad Request',
+          statusCode: 400
+        });
+      } else {
+        throw new InternalServerErrorException({
+          message: error.message,
+          error: error.response.error,
+          statusCode: error.status
+        });
+      }
+    }
+  }
+
+  async findAll(): Promise<MainArticle[]> {
+    try {
+      const mainArticles = await this.mainArticleRepository.find();
+      if (mainArticles.length === 0) {
+        throw new NotFoundException({
+          message: 'No se encontraron artículos principales.',
+          error: 'Not Found',
+          statusCode: 404
+        });
+      }
+      return mainArticles;
+    } catch (error) {
+      throw new InternalServerErrorException({
+        message: error.message,
+        error: error.response.error,
+        statusCode: error.status
+      });
+    }
+  }
+
+  async findOne(id: number): Promise<MainArticle> {
+    try {
+      const mainArticle = await this.mainArticleRepository.findOne({ where: { id } });
+      if (!mainArticle) {
+        throw new NotFoundException({
+          message: `El artículo principal con el ID ${id} no se encontró.`,
+          error: 'Not Found',
+          statusCode: 404
+        });
+      }
+      return mainArticle;
+    } catch (error) {
+      throw new InternalServerErrorException({
+        message: error.message,
+        error: error.response.error,
+        statusCode: error.status
+      });
+    }
+  }
+
+  async update(id: number, updateArticleDto: UpdateArticleDto): Promise<MainArticle> {
+    try {
+      const result = await this.mainArticleRepository.update(id, updateArticleDto);
+      if (result.affected === 0) {
+        throw new NotFoundException({
+          message: `El artículo principal con el ID ${id} no se encontró.`,
+          error: 'Not Found',
+          statusCode: 404
+        });
+      }
+      const mainArticle = await this.findOne(id);
+      return mainArticle;
+    } catch (error) {
+      throw new InternalServerErrorException({
+        message: error.message,
+        error: error.response.error,
+        statusCode: error.status
+      });
+    }
+  }
+
+  async remove(id: number): Promise<void> {
+    try {
+      const result = await this.mainArticleRepository.delete(id);
+      if (result.affected === 0) {
+        throw new NotFoundException({
+          message: `El artículo principal con el ID ${id} no se encontró.`,
+          error: 'Not Found',
+          statusCode: 404
+        });
+      }
+    } catch (error) {
+      throw new InternalServerErrorException({
+        message: error.message,
+        error: error.response.error,
+        statusCode: error.status
+      });
+    }
+  }
+}
