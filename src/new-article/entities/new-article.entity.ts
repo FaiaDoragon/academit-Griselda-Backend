@@ -11,7 +11,7 @@ export class NewArticle {
     @Column('varchar', { name: 'titulo_articulo', length: 100 })
     articletitle: string;
 
-    @Column('varchar', { name: 'descripcion', length: 100 })
+    @Column('varchar', { name: 'descripcion', length: 400 })
     description: string;
 
     @Column('date', { name: 'created_at', nullable: true })

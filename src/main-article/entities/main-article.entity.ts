@@ -5,10 +5,10 @@ export class MainArticle {
     @PrimaryGeneratedColumn({ type: 'int', name: 'id' })
     id: number;
 
-    @Column('varchar', { name: 'titulo', length: 100 })
+    @Column('varchar', { name: 'titulo', length: 200 })
     title: string;
 
-    @Column('varchar', { name: 'descripcion', length: 100 })
+    @Column('varchar', { name: 'descripcion', length: 422 })
     description: string;
 
     @Column('varchar', { name: 'textoBoton', length: 100 })

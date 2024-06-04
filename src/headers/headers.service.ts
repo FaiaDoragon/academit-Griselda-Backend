@@ -36,7 +36,12 @@ export class HeadersService {
 
   async findAll(): Promise<Header[]> {
     try {
-      const items = await this.headersRepository.find();
+      const items = await this.headersRepository.find({
+        order: {
+          id: 'DESC'
+        },
+        take: 10
+      });
       if (items.length === 0) {
         throw new NotFoundException({
           message: 'No se encontraron encabezados.',

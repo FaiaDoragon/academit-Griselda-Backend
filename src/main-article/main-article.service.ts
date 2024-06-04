@@ -16,7 +16,7 @@ export class MainArticleService {
     try {
       const mainArticle = this.mainArticleRepository.create(mainArticleData);
       await this.mainArticleRepository.save(mainArticle);
-      const mainArticleToFind = this.findOne(mainArticle.id)
+      const mainArticleToFind = await this.findOne(mainArticle.id)
       if (!mainArticleToFind) {
         throw new NotFoundException({
           message: 'Error al crear el Articulo Principal.',

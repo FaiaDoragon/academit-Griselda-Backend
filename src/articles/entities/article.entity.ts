@@ -9,7 +9,7 @@ export class Article {
     @Column('varchar', { name: 'titulo', length: 100 })
     title: string;
 
-    @Column('varchar', { name: 'descripcion', length: 100 })
+    @Column('varchar', { name: 'descripcion', length: 400 })
     description: string;
 
     @Column('longblob', { name: 'imagen', nullable: true })
