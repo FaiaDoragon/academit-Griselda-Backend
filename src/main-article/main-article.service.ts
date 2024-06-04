@@ -36,7 +36,12 @@ export class MainArticleService {
 
   async findAll(): Promise<MainArticle[]> {
     try {
-      const mainArticles = await this.mainArticleRepository.find();
+      const mainArticles = await this.mainArticleRepository.find({
+        order: {
+          id: 'DESC'
+        },
+        take: 1
+      });
       if (mainArticles.length === 0) {
         throw new NotFoundException({
           message: 'No se encontraron artículos principales.',

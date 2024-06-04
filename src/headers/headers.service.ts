@@ -40,7 +40,7 @@ export class HeadersService {
         order: {
           id: 'DESC'
         },
-        take: 10
+        take: 1
       });
       if (items.length === 0) {
         throw new NotFoundException({

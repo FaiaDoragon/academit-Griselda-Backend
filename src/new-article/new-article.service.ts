@@ -36,7 +36,12 @@ export class NewArticleService {
 
   async findAll(): Promise<NewArticle[]> {
     try {
-      const newArticles = await this.newArticleRepository.find();
+      const newArticles = await this.newArticleRepository.find({
+        order: {
+          id: 'DESC'
+        },
+        take: 3
+      });
       if (newArticles.length === 0) {
         throw new NotFoundException({
           message: 'No se encontraron nuevos artículos.',
