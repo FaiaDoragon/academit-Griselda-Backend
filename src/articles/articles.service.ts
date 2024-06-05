@@ -18,7 +18,6 @@ export class ArticlesService {
     if (file) {
       articleData2 = { ...articleData, image: file.path }
     }
-
     try {
       const article = this.articleRepository.create(articleData2);
       await this.articleRepository.save(article);

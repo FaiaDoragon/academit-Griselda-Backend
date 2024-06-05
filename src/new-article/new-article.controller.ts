@@ -9,8 +9,8 @@ import { FileInterceptor } from '@nestjs/platform-express';
 @Controller('new-article')
 export class NewArticleController {
   constructor(private readonly newArticleService: NewArticleService) {}
-
   
+  @Post()
   create(@Body() createNewArticleDto: CreateNewArticleDto) {
     return this.newArticleService.create(createNewArticleDto);
   }
