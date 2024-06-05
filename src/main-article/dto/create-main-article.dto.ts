@@ -11,5 +11,5 @@ export class CreateMainArticleDto {
     textButton: string;
 
     @ApiProperty()
-    imageUrl?: string;
+    image?: string | null;
 }

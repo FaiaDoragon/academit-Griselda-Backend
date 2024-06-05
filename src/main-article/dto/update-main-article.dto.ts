@@ -12,5 +12,5 @@ export class UpdateMainArticleDto extends PartialType(CreateMainArticleDto) {
     textButton?: string;
   
     @ApiProperty()
-    imageUrl?: string;
+    image?: string | null;
   }

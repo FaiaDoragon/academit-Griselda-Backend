@@ -9,5 +9,6 @@ export class CreateArticleDto {
     description: string;
 
     @ApiProperty()
-    image?: string;
+    image?: string | null;
+
 }

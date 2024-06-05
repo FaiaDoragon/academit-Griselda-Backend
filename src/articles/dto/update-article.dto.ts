@@ -10,5 +10,6 @@ export class UpdateArticleDto extends PartialType(CreateArticleDto) {
     description?: string;
 
     @ApiProperty()
-    image?: string
+    image?: string | null;
+
 }

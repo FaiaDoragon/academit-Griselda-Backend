@@ -12,10 +12,14 @@ export class MainArticleService {
     private mainArticleRepository: Repository<MainArticle>,
   ) { }
 
-  async create(mainArticleData: CreateMainArticleDto, file : any): Promise<MainArticle> {
-    console.log(mainArticleData);
-    console.log(file);
-    const mainArticleData2 = { ...mainArticleData, image: file.path }
+  async create(mainArticleData: CreateMainArticleDto, file: any): Promise<MainArticle> {
+    let mainArticleData2 = mainArticleData
+    //revisar ahora
+    if (file) {
+      console.log(file);
+      mainArticleData2 = { ...mainArticleData, image: file.path }
+    }
+    
     try {
       const mainArticle = this.mainArticleRepository.create(mainArticleData2);
       await this.mainArticleRepository.save(mainArticle);

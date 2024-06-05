@@ -13,13 +13,14 @@ export class ArticlesService {
   ) { }
 
   async create(articleData: CreateArticleDto, file: any): Promise<Article> {
-    console.log(articleData);
-    console.log(file);
-    
-    //CAMBIAR NOMBRE DE LA VARIABLE
-    const ArticleData2 = { ...articleData, image: file.path }
+    let articleData2 = articleData
+    //revisar ahora
+    if (file) {
+      articleData2 = { ...articleData, image: file.path }
+    }
+
     try {
-      const article = this.articleRepository.create(ArticleData2);
+      const article = this.articleRepository.create(articleData2);
       await this.articleRepository.save(article);
       const articleToFind = await this.findOne(article.id)
       if (!articleToFind) {
