@@ -11,6 +11,8 @@ import { MainArticleModule } from './main-article/main-article.module';
 import { MainArticle } from './main-article/entities/main-article.entity';
 import { NewArticleModule } from './new-article/new-article.module';
 import { NewArticle } from './new-article/entities/new-article.entity';
+import { MulterModule } from '@nestjs/platform-express';
+import { multerConfig } from './multer.config';
 
 @Module({
   imports: [

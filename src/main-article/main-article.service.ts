@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { MainArticle } from './entities/main-article.entity';
 import { CreateMainArticleDto } from './dto/create-main-article.dto';
-import { UpdateArticleDto } from 'src/articles/dto/update-article.dto';
+import { UpdateMainArticleDto } from './dto/update-main-article.dto';
 
 @Injectable()
 export class MainArticleService {
@@ -12,9 +12,12 @@ export class MainArticleService {
     private mainArticleRepository: Repository<MainArticle>,
   ) { }
 
-  async create(mainArticleData: CreateMainArticleDto): Promise<MainArticle> {
+  async create(mainArticleData: CreateMainArticleDto, file : any): Promise<MainArticle> {
+    console.log(mainArticleData);
+    console.log(file);
+    const mainArticleData2 = { ...mainArticleData, image: file.path }
     try {
-      const mainArticle = this.mainArticleRepository.create(mainArticleData);
+      const mainArticle = this.mainArticleRepository.create(mainArticleData2);
       await this.mainArticleRepository.save(mainArticle);
       const mainArticleToFind = await this.findOne(mainArticle.id)
       if (!mainArticleToFind) {
@@ -79,7 +82,7 @@ export class MainArticleService {
     }
   }
 
-  async update(id: number, updateArticleDto: UpdateArticleDto): Promise<MainArticle> {
+  async update(id: number, updateArticleDto: UpdateMainArticleDto): Promise<MainArticle> {
     try {
       const result = await this.mainArticleRepository.update(id, updateArticleDto);
       if (result.affected === 0) {

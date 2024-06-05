@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { ArticlesService } from './articles.service';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('Articles')
 @Controller('articles')
@@ -10,8 +11,9 @@ export class ArticlesController {
   constructor(private readonly articlesService: ArticlesService) { }
 
   @Post()
-  create(@Body() createArticleDto: CreateArticleDto) {
-    return this.articlesService.create(createArticleDto);
+  @UseInterceptors(FileInterceptor('image'))
+  create(@Body() createArticleDto: CreateArticleDto, @UploadedFile() file:any) {
+    return this.articlesService.create(createArticleDto, file);
   }
 
   @Get()

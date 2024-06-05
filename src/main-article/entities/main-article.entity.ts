@@ -15,7 +15,7 @@ export class MainArticle {
     textButton: string;
 
     @Column('varchar', { name: 'imagen', nullable: true })
-    image: Buffer;
+    image: string;
 
     @Column('date', { name: 'created_at', nullable: true })
     createdAt: Date = new Date();

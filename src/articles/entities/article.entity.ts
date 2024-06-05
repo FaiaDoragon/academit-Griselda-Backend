@@ -13,7 +13,7 @@ export class Article {
     description: string;
 
     @Column('longblob', { name: 'imagen', nullable: true })
-    image: Buffer | null;
+    image: string;
 
     @Column('date', { name: 'created_at', nullable: true })
     createdAt: Date = new Date();

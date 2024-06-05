@@ -12,9 +12,9 @@ export class ArticlesService {
     private articleRepository: Repository<Article>,
   ) { }
 
-  async create(createArticleDto: CreateArticleDto): Promise<Article> {
+  async create(articleData: CreateArticleDto, file: any): Promise<Article> {
     try {
-      const article = this.articleRepository.create(createArticleDto);
+      const article = this.articleRepository.create(articleData);
       await this.articleRepository.save(article);
       const articleToFind = await this.findOne(article.id)
       if (!articleToFind) {
