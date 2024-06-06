@@ -13,12 +13,8 @@ export class MainArticleService {
   ) { }
 
   async create(mainArticleData: CreateMainArticleDto, file: any): Promise<MainArticle> {
-    let mainArticleData2 = mainArticleData
-    //revisar ahora
-    if (file) {
-      console.log(file);
-      mainArticleData2 = { ...mainArticleData, image: file.path }
-    }
+    
+    let mainArticleData2 = file ? { ...mainArticleData, image: file.path } : mainArticleData
     
     try {
       const mainArticle = this.mainArticleRepository.create(mainArticleData2);
