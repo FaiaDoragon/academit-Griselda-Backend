@@ -40,6 +40,7 @@ export class NewArticleService {
         order: {
           id: 'DESC'
         },
+        take: 3
       });
       if (newArticles.length === 0) {
         throw new NotFoundException({
