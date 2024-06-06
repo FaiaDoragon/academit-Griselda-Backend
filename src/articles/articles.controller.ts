@@ -12,7 +12,7 @@ export class ArticlesController {
 
   @Post()
   @UseInterceptors(FileInterceptor('image'))
-  create(@Body() createArticleDto: CreateArticleDto, @UploadedFile() file:any) {
+  create(@Body() createArticleDto: CreateArticleDto, @UploadedFile() file : any) {
     return this.articlesService.create(createArticleDto, file);
   }
 

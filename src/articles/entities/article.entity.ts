@@ -12,7 +12,7 @@ export class Article {
     @Column('varchar', { name: 'descripcion', length: 400 })
     description: string;
 
-    @Column('longblob', { name: 'imagen', nullable: true })
+    @Column('varchar', { name: 'imagen', nullable: true })
     image: string;
 
     @Column('date', { name: 'created_at', nullable: true })

@@ -13,13 +13,9 @@ export class ArticlesService {
   ) { }
 
   async create(articleData: CreateArticleDto, file: any): Promise<Article> {
-    let articleData2 = articleData
-    //revisar ahora
-    console.log(file);
-    
-    if (file) {
-      articleData2 = { ...articleData, image: file.path }
-    }
+
+    let articleData2 = file ? { ...articleData, image: file.path } : articleData
+
     try {
       const article = this.articleRepository.create(articleData2);
       await this.articleRepository.save(article);
