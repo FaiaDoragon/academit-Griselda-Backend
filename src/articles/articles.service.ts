@@ -15,6 +15,8 @@ export class ArticlesService {
   async create(articleData: CreateArticleDto, file: any): Promise<Article> {
     let articleData2 = articleData
     //revisar ahora
+    console.log(file);
+    
     if (file) {
       articleData2 = { ...articleData, image: file.path }
     }

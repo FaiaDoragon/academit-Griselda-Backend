@@ -34,8 +34,8 @@ import { join } from 'path';
       isGlobal: true, // Hace que ConfigModule esté disponible globalmente
     }),
     ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'uploads'), // ruta de la carpeta de imágenes
-      serveRoot: '/uploads', // ruta base desde donde se servirán las imágenes
+      rootPath: join(__dirname, '..', 'uploads/images'), // ruta de la carpeta de imágenes
+      serveRoot: '/uploads/images', // ruta base desde donde se servirán las imágenes
     }),
     ArticlesModule,
     HeadersModule,
