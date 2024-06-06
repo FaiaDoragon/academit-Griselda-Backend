@@ -17,8 +17,8 @@ export class Header {
   @Column('varchar', { name: 'item4', length: 100 })
   item4: string;
 
-  @Column('longblob', { name: 'logo', nullable: true })
-  logo: Buffer | null;
+  @Column('varchar', { name: 'logo', nullable: true })
+  logo: string | null;
 
   @Column('date', { name: 'created_at', nullable: true })
   createdAt: Date = new Date();

@@ -15,5 +15,5 @@ export class UpdateHeaderDto extends PartialType(CreateHeaderItemDto) {
     item4?: string;
 
     @ApiProperty()
-    logo?: Buffer;
+    logo?: string;
 }

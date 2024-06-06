@@ -14,5 +14,5 @@ export class CreateHeaderItemDto {
     item4?: string;
 
     @ApiProperty()
-    logo?: Buffer;
+    logo?: string;
 }

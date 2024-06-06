@@ -12,9 +12,12 @@ export class HeadersService {
     private headersRepository: Repository<Header>,
   ) { }
 
-  async create(itemsData: CreateHeaderItemDto): Promise<Header> {
+  async create(itemsData: CreateHeaderItemDto, file: any): Promise<Header> {
+
+    let itemsData2 = file ? { ...itemsData, logo: file.path } : itemsData
+    
     try {
-      const items = this.headersRepository.create(itemsData);
+      const items = this.headersRepository.create(itemsData2);
       await this.headersRepository.save(items);
       const item = this.findOne(items.id)
       if (!item) {
