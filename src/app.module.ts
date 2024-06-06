@@ -11,8 +11,8 @@ import { MainArticleModule } from './main-article/main-article.module';
 import { MainArticle } from './main-article/entities/main-article.entity';
 import { NewArticleModule } from './new-article/new-article.module';
 import { NewArticle } from './new-article/entities/new-article.entity';
-import { MulterModule } from '@nestjs/platform-express';
-import { multerConfig } from './multer.config';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [
@@ -32,6 +32,10 @@ import { multerConfig } from './multer.config';
     }),
     ConfigModule.forRoot({
       isGlobal: true, // Hace que ConfigModule esté disponible globalmente
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'uploads'), // ruta de la carpeta de imágenes
+      serveRoot: '/uploads', // ruta base desde donde se servirán las imágenes
     }),
     ArticlesModule,
     HeadersModule,
