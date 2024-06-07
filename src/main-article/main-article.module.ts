@@ -4,11 +4,11 @@ import { MainArticleController } from './main-article.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MainArticle } from './entities/main-article.entity';
 import { MulterModule } from '@nestjs/platform-express';
-import { multerConfig } from 'src/multer.config';
+import { multerConfigImages } from '../multer.config';
 
 @Module({
   imports: [TypeOrmModule.forFeature([MainArticle]),
-  MulterModule.register({ ...multerConfig }),],
+  MulterModule.register({ ...multerConfigImages }),],
   controllers: [MainArticleController],
   providers: [MainArticleService],
 })

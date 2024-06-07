@@ -12,9 +12,9 @@ export class CursosService {
     private cursoRepository: Repository<Curso>,
   ) { }
 
-  async create(createCursoDto: CreateCursoDto, file: any) : Promise<Curso> {
+  async create(createCursoDto: CreateCursoDto, file: any): Promise<Curso> {
 
-    let createCursoData = file ? { ...createCursoDto, image: file.path } : createCursoDto
+    let createCursoData = file ? { ...createCursoDto, video: file.path } : createCursoDto
 
     try {
       const curso = this.cursoRepository.create(createCursoData);
@@ -37,7 +37,7 @@ export class CursosService {
     }
   }
 
-  async findAll() : Promise<Curso[]> {
+  async findAll(): Promise<Curso[]> {
     try {
       const cursos = await this.cursoRepository.find({
         order: {
@@ -61,15 +61,67 @@ export class CursosService {
     }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} curso`;
+  async findOne(id: number): Promise<Curso> {
+    try {
+      const curso = await this.cursoRepository.findOne({ where: { id } });
+      if (!curso) {
+        throw new NotFoundException({
+          message: `El artículo principal con el ID ${id} no se encontró.`,
+          error: 'Not Found',
+          statusCode: 404
+        });
+      }
+      return curso;
+    } catch (error) {
+      throw new InternalServerErrorException({
+        message: error.message,
+        error: error.response.error,
+        statusCode: error.status
+      });
+    }
   }
 
-  update(id: number, updateCursoDto: UpdateCursoDto, file: any) {
-    return `This action updates a #${id} curso`;
+  async update(id: number, updateCursoDto: UpdateCursoDto, file: any) {
+
+    let updateCursoData = file ? { ...updateCursoDto, video: file.path } : updateCursoDto
+
+    try {
+      const result = await this.cursoRepository.update(id, updateCursoData);
+      if (result.affected === 0) {
+        throw new NotFoundException({
+          message: `El artículo principal con el ID ${id} no se encontró.`,
+          error: 'Not Found',
+          statusCode: 404
+        });
+      }
+      const curso = this.findOne(id)
+      return curso;
+
+    } catch (error) {
+      throw new InternalServerErrorException({
+        message: error.message,
+        error: error.response.error,
+        statusCode: error.status
+      });
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} curso`;
+  async remove(id: number) {
+    try {
+      const result = await this.cursoRepository.delete(id);
+      if (result.affected === 0) {
+        throw new NotFoundException({
+          message: `El artículo principal con el ID ${id} no se encontró.`,
+          error: 'Not Found',
+          statusCode: 404
+        });
+      }
+    } catch (error) {
+      throw new InternalServerErrorException({
+        message: error.message,
+        error: error.response.error,
+        statusCode: error.status
+      });
+    }
   }
 }

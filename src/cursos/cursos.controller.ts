@@ -9,7 +9,7 @@ export class CursosController {
   constructor(private readonly cursosService: CursosService) {}
 
   @Post()
-  @UseInterceptors(FileInterceptor('image'))
+  @UseInterceptors(FileInterceptor('video'))
   create(@Body() CreateCursoDto: CreateCursoDto, @UploadedFile() file : any) {
     return this.cursosService.create(CreateCursoDto, file);
   }
@@ -20,18 +20,18 @@ export class CursosController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.cursosService.findOne(+id);
+  findOne(@Param('id') id: number) {
+    return this.cursosService.findOne(id);
   }
 
   @Patch(':id')
-  @UseInterceptors(FileInterceptor('image'))
+  @UseInterceptors(FileInterceptor('video'))
   update(@Param('id') id: number, @Body() updateCursoDto: UpdateCursoDto, @UploadedFile() file : any) {
     return this.cursosService.update(id, updateCursoDto, file);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.cursosService.remove(+id);
+  remove(@Param('id') id: number) {
+    return this.cursosService.remove(id);
   }
 }
