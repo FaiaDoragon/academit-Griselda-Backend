@@ -13,6 +13,7 @@ import { NewArticleModule } from './new-article/new-article.module';
 import { NewArticle } from './new-article/entities/new-article.entity';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { CursosModule } from './cursos/cursos.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { join } from 'path';
     HeadersModule,
     MainArticleModule,
     NewArticleModule,
+    CursosModule,
   ],
   controllers: [AppController],
   providers: [AppService],
