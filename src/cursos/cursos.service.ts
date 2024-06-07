@@ -12,7 +12,7 @@ export class CursosService {
     private cursoRepository: Repository<Curso>,
   ) { }
 
-  async create(createCursoDto: CreateCursoDto, file: any) {
+  async create(createCursoDto: CreateCursoDto, file: any) : Promise<Curso> {
 
     let createCursoData = file ? { ...createCursoDto, image: file.path } : createCursoDto
 
@@ -37,8 +37,28 @@ export class CursosService {
     }
   }
 
-  findAll() {
-    return `This action returns all cursos`;
+  async findAll() : Promise<Curso[]> {
+    try {
+      const cursos = await this.cursoRepository.find({
+        order: {
+          id: 'DESC'
+        }
+      });
+      if (cursos.length === 0) {
+        throw new NotFoundException({
+          message: 'No se encontraron artículos principales.',
+          error: 'Not Found',
+          statusCode: 404
+        });
+      }
+      return cursos;
+    } catch (error) {
+      throw new InternalServerErrorException({
+        message: error.message,
+        error: error.response.error,
+        statusCode: error.status
+      });
+    }
   }
 
   findOne(id: number) {
