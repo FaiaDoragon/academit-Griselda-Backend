@@ -81,9 +81,12 @@ export class ArticlesService {
     }
   }
 
-  async update(id: number, updateArticleDto: UpdateArticleDto): Promise<Article> {
+  async update(id: number, updateArticleDto: UpdateArticleDto, file:any): Promise<Article> {
+
+    const articleData = file ? { ...updateArticleDto, image: file.path } : updateArticleDto
+
     try {
-      const result = await this.articleRepository.update(id, updateArticleDto);
+      const result = await this.articleRepository.update(id, articleData);
       if (result.affected === 0) {
         throw new NotFoundException({
           message: `El artículo con el ID ${id} no se encontró.`,
