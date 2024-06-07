@@ -12,12 +12,12 @@ export class MainArticleService {
     private mainArticleRepository: Repository<MainArticle>,
   ) { }
 
-  async create(mainArticleData: CreateMainArticleDto, file: any): Promise<MainArticle> {
+  async create(mainArticleDto: CreateMainArticleDto, file: any): Promise<MainArticle> {
     
-    let mainArticleData2 = file ? { ...mainArticleData, image: file.path } : mainArticleData
+    let mainArticleData = file ? { ...mainArticleDto, image: file.path } : mainArticleDto
     
     try {
-      const mainArticle = this.mainArticleRepository.create(mainArticleData2);
+      const mainArticle = this.mainArticleRepository.create(mainArticleData);
       await this.mainArticleRepository.save(mainArticle);
       const mainArticleToFind = await this.findOne(mainArticle.id)
       if (!mainArticleToFind) {
@@ -82,9 +82,12 @@ export class MainArticleService {
     }
   }
 
-  async update(id: number, updateArticleDto: UpdateMainArticleDto): Promise<MainArticle> {
+  async update(id: number, updateArticleDto: UpdateMainArticleDto, file : any): Promise<MainArticle> {
+
+    let updateMainArticleData = file ? { ...updateArticleDto, image: file.path } : updateArticleDto
+
     try {
-      const result = await this.mainArticleRepository.update(id, updateArticleDto);
+      const result = await this.mainArticleRepository.update(id, updateMainArticleData);
       if (result.affected === 0) {
         throw new NotFoundException({
           message: `El artículo principal con el ID ${id} no se encontró.`,

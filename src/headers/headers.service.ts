@@ -12,9 +12,9 @@ export class HeadersService {
     private headersRepository: Repository<Header>,
   ) { }
 
-  async create(CreateHeaderItemDto: CreateHeaderItemDto, file: any): Promise<Header> {
+  async create( headerItemDto: CreateHeaderItemDto, file: any): Promise<Header> {
 
-    let CreateHeaderItemData = file ? { ...CreateHeaderItemDto, logo: file.path } : CreateHeaderItemDto
+    let CreateHeaderItemData = file ? { ...headerItemDto, logo: file.path } : headerItemDto
     
     try {
       const items = this.headersRepository.create(CreateHeaderItemData);

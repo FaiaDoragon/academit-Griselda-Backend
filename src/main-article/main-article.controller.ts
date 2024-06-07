@@ -27,8 +27,9 @@ export class MainArticleController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: number, @Body() updateMainArticleDto: UpdateMainArticleDto) {
-    return this.mainArticleService.update(id, updateMainArticleDto);
+  @UseInterceptors(FileInterceptor('image'))
+  update(@Param('id') id: number, @Body() updateMainArticleDto: UpdateMainArticleDto, @UploadedFile() file : any) {
+    return this.mainArticleService.update(id, updateMainArticleDto, file);
   }
 
   @Delete(':id')
