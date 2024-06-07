@@ -27,8 +27,9 @@ export class HeadersController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: number, @Body() updateHeaderDto: UpdateHeaderDto) {
-    return this.headersService.update(id, updateHeaderDto);
+  @UseInterceptors(FileInterceptor('logo'))
+  update(@Param('id') id: number, @Body() updateHeaderDto: UpdateHeaderDto, @UploadedFile() file : any) {
+    return this.headersService.update(id, updateHeaderDto, file);
   }
 
   @Delete(':id')

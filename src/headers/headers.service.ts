@@ -12,12 +12,12 @@ export class HeadersService {
     private headersRepository: Repository<Header>,
   ) { }
 
-  async create(itemsData: CreateHeaderItemDto, file: any): Promise<Header> {
+  async create(CreateHeaderItemDto: CreateHeaderItemDto, file: any): Promise<Header> {
 
-    let itemsData2 = file ? { ...itemsData, logo: file.path } : itemsData
+    let CreateHeaderItemData = file ? { ...CreateHeaderItemDto, logo: file.path } : CreateHeaderItemDto
     
     try {
-      const items = this.headersRepository.create(itemsData2);
+      const items = this.headersRepository.create(CreateHeaderItemData);
       await this.headersRepository.save(items);
       const item = this.findOne(items.id)
       if (!item) {
@@ -82,10 +82,13 @@ export class HeadersService {
     }
   }
 
-  async update(id: number, updateHeaderDto: UpdateHeaderDto): Promise<Header> {
+  async update(id: number, updateHeaderDto: UpdateHeaderDto, file :any): Promise<Header> {
+
+    let updateHeaderData = file ? { ...updateHeaderDto, logo: file.path } : updateHeaderDto
+
     try {
       // const itemToUpdate = await this.findOne(id)
-      const result = await this.headersRepository.update(id, updateHeaderDto);
+      const result = await this.headersRepository.update(id, updateHeaderData);
       if (result.affected === 0) {
         throw new NotFoundException({
           message: `El encabezado con el ID ${id} no se encontró.`,
