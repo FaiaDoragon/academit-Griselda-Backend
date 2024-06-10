@@ -6,16 +6,16 @@ export class Header {
   id: number;
 
   @Column('varchar', { name: 'item1', length: 100 })
-  item1: string;
+  item01: string;
 
   @Column('varchar', { name: 'item2', length: 100 })
-  item2: string;
+  item02: string;
 
   @Column('varchar', { name: 'item3', length: 100 })
-  item3: string;
+  item03: string;
 
   @Column('varchar', { name: 'item4', length: 100 })
-  item4: string;
+  item04: string;
 
   @Column('varchar', { name: 'logo', nullable: true })
   logo: string | null;

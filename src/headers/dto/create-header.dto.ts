@@ -6,7 +6,7 @@ export class CreateHeaderItemDto {
         description: 'Texto para el primer elemento del header',
         example: 'Inicio',
     })
-    item1: string;
+    item01: string;
 
     @ApiProperty({
         description: 'Texto opcional para el segundo elemento del header',
@@ -14,7 +14,7 @@ export class CreateHeaderItemDto {
         required: false,
         nullable: true,
     })
-    item2?: string;
+    item02?: string;
 
     @ApiProperty({
         description: 'Texto opcional para el tercer elemento del header',
@@ -22,7 +22,7 @@ export class CreateHeaderItemDto {
         required: false,
         nullable: true,
     })
-    item3?: string;
+    item03?: string;
 
     @ApiProperty({
         description: 'Texto opcional para el cuarto elemento del header',
@@ -30,7 +30,7 @@ export class CreateHeaderItemDto {
         required: false,
         nullable: true,
     })
-    item4?: string;
+    item04?: string;
 
     @ApiProperty({
         description: 'URL de la imagen del logo del header. Opcional.',
