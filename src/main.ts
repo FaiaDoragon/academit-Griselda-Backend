@@ -5,14 +5,7 @@ import * as dotenv from 'dotenv';
 
 async function bootstrap() {
   dotenv.config();
-  const app = await NestFactory.create(AppModule);
-
-  app.enableCors({
-    origin: 'http://localhost:3000', // Reemplaza con la URL permitida
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    credentials: true,
-    allowedHeaders: 'Content-Type, Accept',
-  });
+  const app = await NestFactory.create(AppModule, { cors: true });
 
   const apiDescription = `
   Academit-Griselda es una plataforma educativa innovadora que impulsa el aprendizaje continuo y el crecimiento profesional. Nuestra API ofrece acceso a una amplia gama de recursos educativos, incluyendo cursos interactivos, artículos informativos y noticias relevantes sobre tecnología, negocios y más.

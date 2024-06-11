@@ -11,7 +11,7 @@ export class ArticlesController {
   constructor(private readonly articlesService: ArticlesService) { }
 
   @Post()
-  @UseInterceptors(FileInterceptor('imagen'))
+  @UseInterceptors(FileInterceptor('image'))
   @ApiOperation({ summary: 'Crear un nuevo artículo', description: 'Crea un nuevo artículo con los datos proporcionados y opcionalmente una imagen.' })
   @ApiCreatedResponse({ description: 'El artículo se ha creado exitosamente.' })
   @ApiBadRequestResponse({ description: 'Solicitud incorrecta. Por favor, revisa tus datos de entrada.' })
@@ -45,7 +45,7 @@ export class ArticlesController {
   }
 
   @Patch(':id')
-  @UseInterceptors(FileInterceptor('imagen'))
+  @UseInterceptors(FileInterceptor('image'))
   @ApiOperation({ summary: 'Actualizar un artículo', description: 'Actualiza los datos de un artículo existente y opcionalmente su imagen.' })
   @ApiOkResponse({ description: 'El artículo se ha actualizado exitosamente.' })
   @ApiNotFoundResponse({ description: 'Artículo no encontrado.' })
