@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, InternalServerErrorException, BadRequestException } from '@nestjs/common';
+import { Injectable, NotFoundException, InternalServerErrorException, BadRequestException, Logger } from '@nestjs/common';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -7,37 +7,43 @@ import { Repository } from 'typeorm';
 
 @Injectable()
 export class ArticlesService {
+  private readonly logger = new Logger(ArticlesService.name);
+
   constructor(
     @InjectRepository(Article)
     private articleRepository: Repository<Article>,
-  ) { }
+  ) {}
 
   async create(articleData: CreateArticleDto, file: any): Promise<Article> {
+    this.logger.log(`Servicio: ArticlesService, Método: create, Args: ${JSON.stringify({ articleData, file })}`);
 
-    let articleData2 = file ? { ...articleData, image: file.path } : articleData
+    let articleData2 = file ? { ...articleData, image: file.path } : articleData;
 
     try {
       const article = this.articleRepository.create(articleData2);
       await this.articleRepository.save(article);
-      const articleToFind = await this.findOne(article.id)
+      const articleToFind = await this.findOne(article.id);
       if (!articleToFind) {
         throw new NotFoundException({
-          message: 'No se creo el articulo.',
+          message: 'No se creó el artículo.',
           error: 'Bad Request',
           statusCode: 400
         });
       }
       return article;
     } catch (error) {
+      this.logger.error(`Error en Servicio: ArticlesService, Método: create, Args: ${JSON.stringify({ articleData, file })}, Error: ${error.message}`);
       throw new InternalServerErrorException({
         message: error.message,
-        error: error.response.error,
+        error: error.response?.error,
         statusCode: error.status
       });
     }
   }
 
   async findAll(): Promise<Article[]> {
+    this.logger.log('Servicio: ArticlesService, Método: findAll');
+
     try {
       const articles = await this.articleRepository.find({
         order: {
@@ -53,15 +59,18 @@ export class ArticlesService {
       }
       return articles;
     } catch (error) {
+      this.logger.error(`Error en Servicio: ArticlesService, Método: findAll, Error: ${error.message}`);
       throw new InternalServerErrorException({
         message: error.message,
-        error: error.response.error,
+        error: error.response?.error,
         statusCode: error.status
       });
     }
   }
 
   async findOne(id: number): Promise<Article> {
+    this.logger.log(`Servicio: ArticlesService, Método: findOne, Args: ${id}`);
+
     try {
       const article = await this.articleRepository.findOne({ where: { id } });
       if (!article) {
@@ -73,17 +82,19 @@ export class ArticlesService {
       }
       return article;
     } catch (error) {
+      this.logger.error(`Error en Servicio: ArticlesService, Método: findOne, Args: ${id}, Error: ${error.message}`);
       throw new InternalServerErrorException({
         message: error.message,
-        error: error.response.error,
+        error: error.response?.error,
         statusCode: error.status
       });
     }
   }
 
-  async update(id: number, updateArticleDto: UpdateArticleDto, file:any): Promise<Article> {
+  async update(id: number, updateArticleDto: UpdateArticleDto, file: any): Promise<Article> {
+    this.logger.log(`Servicio: ArticlesService, Método: update, Args: ${JSON.stringify({ id, updateArticleDto, file })}`);
 
-    const articleData = file ? { ...updateArticleDto, image: file.path } : updateArticleDto
+    const articleData = file ? { ...updateArticleDto, image: file.path } : updateArticleDto;
 
     try {
       const result = await this.articleRepository.update(id, articleData);
@@ -97,15 +108,18 @@ export class ArticlesService {
       const article = await this.findOne(id);
       return article;
     } catch (error) {
+      this.logger.error(`Error en Servicio: ArticlesService, Método: update, Args: ${JSON.stringify({ id, updateArticleDto, file })}, Error: ${error.message}`);
       throw new InternalServerErrorException({
         message: error.message,
-        error: error.response.error,
+        error: error.response?.error,
         statusCode: error.status
       });
     }
   }
 
   async remove(id: number): Promise<void> {
+    this.logger.log(`Servicio: ArticlesService, Método: remove, Args: ${id}`);
+
     try {
       const result = await this.articleRepository.delete(id);
       if (result.affected === 0) {
@@ -116,9 +130,10 @@ export class ArticlesService {
         });
       }
     } catch (error) {
+      this.logger.error(`Error en Servicio: ArticlesService, Método: remove, Args: ${id}, Error: ${error.message}`);
       throw new InternalServerErrorException({
         message: error.message,
-        error: error.response.error,
+        error: error.response?.error,
         statusCode: error.status
       });
     }

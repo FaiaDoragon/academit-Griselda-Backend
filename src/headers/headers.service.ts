@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, NotFoundException, InternalServerErrorException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Header } from './entities/header.entity';
 import { Repository } from 'typeorm';
@@ -7,19 +7,22 @@ import { UpdateHeaderDto } from './dto/update-header.dto';
 
 @Injectable()
 export class HeadersService {
+  private readonly logger = new Logger(HeadersService.name);
+
   constructor(
     @InjectRepository(Header)
     private headersRepository: Repository<Header>,
-  ) { }
+  ) {}
 
-  async create( headerItemDto: CreateHeaderItemDto, file: any): Promise<Header> {
+  async create(headerItemDto: CreateHeaderItemDto, file: any): Promise<Header> {
+    this.logger.log(`Servicio: HeadersService, Método: create, Args: ${JSON.stringify({ headerItemDto, file })}`);
 
-    let CreateHeaderItemData = file ? { ...headerItemDto, logo: file.path } : headerItemDto
+    let CreateHeaderItemData = file ? { ...headerItemDto, logo: file.path } : headerItemDto;
     
     try {
       const items = this.headersRepository.create(CreateHeaderItemData);
       await this.headersRepository.save(items);
-      const item = this.findOne(items.id)
+      const item = await this.findOne(items.id);
       if (!item) {
         throw new NotFoundException({
           message: 'Error al crear el Header.',
@@ -29,15 +32,18 @@ export class HeadersService {
       }
       return items;
     } catch (error) {
+      this.logger.error(`Error en Servicio: HeadersService, Método: create, Args: ${JSON.stringify({ headerItemDto, file })}, Error: ${error.message}`);
       throw new InternalServerErrorException({
         message: error.message,
-        error: error.response.error,
+        error: error.response?.error,
         statusCode: error.status
       });
     }
   }
 
   async findAll(): Promise<Header[]> {
+    this.logger.log('Servicio: HeadersService, Método: findAll');
+
     try {
       const items = await this.headersRepository.find({
         order: {
@@ -54,15 +60,18 @@ export class HeadersService {
       }
       return items;
     } catch (error) {
+      this.logger.error(`Error en Servicio: HeadersService, Método: findAll, Error: ${error.message}`);
       throw new InternalServerErrorException({
         message: error.message,
-        error: error.response.error,
+        error: error.response?.error,
         statusCode: error.status
       });
     }
   }
 
   async findOne(id: number): Promise<Header> {
+    this.logger.log(`Servicio: HeadersService, Método: findOne, Args: ${id}`);
+
     try {
       const item = await this.headersRepository.findOne({ where: { id } });
       if (!item) {
@@ -74,20 +83,21 @@ export class HeadersService {
       }
       return item;
     } catch (error) {
+      this.logger.error(`Error en Servicio: HeadersService, Método: findOne, Args: ${id}, Error: ${error.message}`);
       throw new InternalServerErrorException({
         message: error.message,
-        error: error.response.error,
+        error: error.response?.error,
         statusCode: error.status
       });
     }
   }
 
-  async update(id: number, updateHeaderDto: UpdateHeaderDto, file :any): Promise<Header> {
+  async update(id: number, updateHeaderDto: UpdateHeaderDto, file: any): Promise<Header> {
+    this.logger.log(`Servicio: HeadersService, Método: update, Args: ${JSON.stringify({ id, updateHeaderDto, file })}`);
 
-    let updateHeaderData = file ? { ...updateHeaderDto, logo: file.path } : updateHeaderDto
+    let updateHeaderData = file ? { ...updateHeaderDto, logo: file.path } : updateHeaderDto;
 
     try {
-      // const itemToUpdate = await this.findOne(id)
       const result = await this.headersRepository.update(id, updateHeaderData);
       if (result.affected === 0) {
         throw new NotFoundException({
@@ -99,15 +109,18 @@ export class HeadersService {
       const item = await this.findOne(id);
       return item;
     } catch (error) {
+      this.logger.error(`Error en Servicio: HeadersService, Método: update, Args: ${JSON.stringify({ id, updateHeaderDto, file })}, Error: ${error.message}`);
       throw new InternalServerErrorException({
         message: error.message,
-        error: error.response.error,
+        error: error.response?.error,
         statusCode: error.status
       });
     }
   }
 
   async remove(id: number): Promise<void> {
+    this.logger.log(`Servicio: HeadersService, Método: remove, Args: ${id}`);
+
     try {
       const result = await this.headersRepository.delete(id);
       if (result.affected === 0) {
@@ -118,9 +131,10 @@ export class HeadersService {
         });
       }
     } catch (error) {
+      this.logger.error(`Error en Servicio: HeadersService, Método: remove, Args: ${id}, Error: ${error.message}`);
       throw new InternalServerErrorException({
         message: error.message,
-        error: error.response.error,
+        error: error.response?.error,
         statusCode: error.status
       });
     }
