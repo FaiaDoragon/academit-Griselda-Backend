@@ -4,6 +4,7 @@ import { UpdateArticleDto } from './dto/update-article.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Article } from './entities/article.entity';
 import { Repository } from 'typeorm';
+import { ArticleResponseDto } from './dto/response-article.dto'; // Importa el DTO de respuesta
 
 @Injectable()
 export class ArticlesService {
@@ -14,7 +15,7 @@ export class ArticlesService {
     private articleRepository: Repository<Article>,
   ) {}
 
-  async create(articleData: CreateArticleDto, file: any): Promise<Article> {
+  async create(articleData: CreateArticleDto, file: any): Promise<ArticleResponseDto> {
     this.logger.log(`Servicio: ArticlesService, Método: create, Args: ${JSON.stringify({ articleData, file })}`);
 
     let articleData2 = file ? { ...articleData, image: file.path } : articleData;
@@ -30,7 +31,7 @@ export class ArticlesService {
           statusCode: 400
         });
       }
-      return article;
+      return this.entityToResponseDto(article); // Mapea la entidad a DTO de respuesta antes de devolverla
     } catch (error) {
       this.logger.error(`Error en Servicio: ArticlesService, Método: create, Args: ${JSON.stringify({ articleData, file })}, Error: ${error.message}`);
       throw new InternalServerErrorException({
@@ -41,7 +42,7 @@ export class ArticlesService {
     }
   }
 
-  async findAll(): Promise<Article[]> {
+  async findAll(): Promise<ArticleResponseDto[]> {
     this.logger.log('Servicio: ArticlesService, Método: findAll');
 
     try {
@@ -57,7 +58,7 @@ export class ArticlesService {
           statusCode: 404
         });
       }
-      return articles;
+      return articles.map(article => this.entityToResponseDto(article)); // Mapea todas las entidades a DTO de respuesta
     } catch (error) {
       this.logger.error(`Error en Servicio: ArticlesService, Método: findAll, Error: ${error.message}`);
       throw new InternalServerErrorException({
@@ -68,7 +69,7 @@ export class ArticlesService {
     }
   }
 
-  async findOne(id: number): Promise<Article> {
+  async findOne(id: number): Promise<ArticleResponseDto> {
     this.logger.log(`Servicio: ArticlesService, Método: findOne, Args: ${id}`);
 
     try {
@@ -80,7 +81,7 @@ export class ArticlesService {
           statusCode: 404
         });
       }
-      return article;
+      return this.entityToResponseDto(article); // Mapea la entidad a DTO de respuesta antes de devolverla
     } catch (error) {
       this.logger.error(`Error en Servicio: ArticlesService, Método: findOne, Args: ${id}, Error: ${error.message}`);
       throw new InternalServerErrorException({
@@ -91,7 +92,7 @@ export class ArticlesService {
     }
   }
 
-  async update(id: number, updateArticleDto: UpdateArticleDto, file: any): Promise<Article> {
+  async update(id: number, updateArticleDto: UpdateArticleDto, file: any): Promise<ArticleResponseDto> {
     this.logger.log(`Servicio: ArticlesService, Método: update, Args: ${JSON.stringify({ id, updateArticleDto, file })}`);
 
     const articleData = file ? { ...updateArticleDto, image: file.path } : updateArticleDto;
@@ -137,5 +138,11 @@ export class ArticlesService {
         statusCode: error.status
       });
     }
+  }
+
+  // Método para mapear la entidad a DTO de respuesta
+  private entityToResponseDto(article: Article): ArticleResponseDto {
+    const { id, title, description, image, createdAt, updatedAt } = article;
+    return { id, title, description, image, createdAt, updatedAt };
   }
 }
