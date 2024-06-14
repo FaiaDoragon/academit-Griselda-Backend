@@ -41,7 +41,7 @@ export class HeadersService {
     }
   }
 
-  async findAll(): Promise<Header[]> {
+  async findAll(page : number, limit : number): Promise<Header[]> {
     this.logger.log('Servicio: HeadersService, Método: findAll');
 
     try {
@@ -49,7 +49,8 @@ export class HeadersService {
         order: {
           id: 'DESC'
         },
-        take: 1
+        skip: (page - 1) * limit,
+        take: limit
       });
       if (items.length === 0) {
         throw new NotFoundException({

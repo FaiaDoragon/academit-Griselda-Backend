@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, Query } from '@nestjs/common';
 import { HeadersService } from './headers.service';
 import { CreateHeaderItemDto } from './dto/create-header.dto';
 import { UpdateHeaderDto } from './dto/update-header.dto';
@@ -31,8 +31,8 @@ export class HeadersController {
   @ApiOkResponse({ description: 'Todos los headers se han recuperado exitosamente.' })
   @ApiNotFoundResponse({ description: 'No se encontraron headers.' })
   @ApiBadRequestResponse({ description: 'Solicitud incorrecta.' })
-  findAll() {
-    return this.headersService.findAll();
+  findAll(@Query('page') page: number = 1, @Query('limit') limit: number = 5) {
+    return this.headersService.findAll(page, limit);
   }
 
   @Get(':id')
