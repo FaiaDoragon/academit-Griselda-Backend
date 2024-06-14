@@ -29,7 +29,8 @@ import { Curso } from './cursos/entities/curso.entity';
         password: configService.get<string>('DB_PASSWORD'),
         database: configService.get<string>('DB_NAME'),
         entities: [Header, Article, MainArticle, NewArticle, Curso],
-        synchronize: true, // No usar en producción, puede perder datos
+        synchronize:
+          configService.get<string>('ENV') === 'develop' ? true : false,
       }),
     }),
     ConfigModule.forRoot({
