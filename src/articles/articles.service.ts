@@ -13,7 +13,14 @@ export class ArticlesService {
   constructor(
     @InjectRepository(Article)
     private articleRepository: Repository<Article>,
+    
   ) {}
+
+  // Método para mapear la entidad a DTO de respuesta
+  private entityToResponseDto(article: Article): ArticleResponseDto {
+    const { id, title, description, image, createdAt, updatedAt } = article;
+    return { id, title, description, image, createdAt, updatedAt };
+  }
 
   async create(articleData: CreateArticleDto, file: any): Promise<ArticleResponseDto> {
     this.logger.log(`Servicio: ArticlesService, Método: create, Args: ${JSON.stringify({ articleData, file })}`);
@@ -42,7 +49,7 @@ export class ArticlesService {
     }
   }
 
-  async findAll(): Promise<ArticleResponseDto[]> {
+  async findAll(page : number, limit : number): Promise<ArticleResponseDto[]> {
     this.logger.log('Servicio: ArticlesService, Método: findAll');
 
     try {
@@ -50,7 +57,10 @@ export class ArticlesService {
         order: {
           id: 'DESC'
         },
+        skip: (page - 1) * limit,
+        take: limit
       });
+      
       if (articles.length === 0) {
         throw new NotFoundException({
           message: 'No se encontraron artículos.',
@@ -140,9 +150,5 @@ export class ArticlesService {
     }
   }
 
-  // Método para mapear la entidad a DTO de respuesta
-  private entityToResponseDto(article: Article): ArticleResponseDto {
-    const { id, title, description, image, createdAt, updatedAt } = article;
-    return { id, title, description, image, createdAt, updatedAt };
-  }
+  
 }

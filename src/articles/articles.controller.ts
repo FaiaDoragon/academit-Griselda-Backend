@@ -1,10 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, HttpCode } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, HttpCode, Query } from '@nestjs/common';
 import { ArticlesService } from './articles.service';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
 import { ArticleResponseDto } from './dto/response-article.dto';
 import { ApiTags, ApiOperation, ApiCreatedResponse, ApiOkResponse, ApiNotFoundResponse, ApiNoContentResponse, ApiBadRequestResponse, ApiInternalServerErrorResponse, ApiBody, ApiConsumes, ApiParam } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { query } from 'express';
 
 @ApiTags('Artículos')
 @Controller('articulos')
@@ -32,8 +33,8 @@ export class ArticlesController {
   @ApiOkResponse({ description: 'Todos los artículos se han recuperado exitosamente.', type: [ArticleResponseDto] }) // Usa el DTO de respuesta en la anotación de Swagger
   @ApiNotFoundResponse({ description: 'No se encontraron artículos.' })
   @ApiBadRequestResponse({ description: 'Solicitud incorrecta.' })
-  async findAll(): Promise<ArticleResponseDto[]> {
-    return await this.articlesService.findAll();
+  async findAll(@Query('page') page: number = 1, @Query('limit') limit: number = 5): Promise<ArticleResponseDto[]> {
+    return await this.articlesService.findAll(page, limit);
   }
 
   @Get(':id')
