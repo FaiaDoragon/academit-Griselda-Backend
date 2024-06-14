@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { NewArticleService } from './new-article.service';
 import { CreateNewArticleDto } from './dto/create-new-article.dto';
 import { UpdateNewArticleDto } from './dto/update-new-article.dto';
@@ -28,8 +28,8 @@ export class NewArticleController {
   @ApiOkResponse({ description: 'Todos los artículos se han recuperado exitosamente.' })
   @ApiNotFoundResponse({ description: 'No se encontraron artículos.' })
   @ApiBadRequestResponse({ description: 'Solicitud incorrecta.' })
-  findAll() {
-    return this.newArticleService.findAll();
+  findAll(@Query('page') page: number = 1, @Query('limit') limit: number = 5) {
+    return this.newArticleService.findAll(page, limit);
   }
 
   @Get(':id')

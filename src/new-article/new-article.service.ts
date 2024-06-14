@@ -39,7 +39,7 @@ export class NewArticleService {
     }
   }
 
-  async findAll(): Promise<NewArticle[]> {
+  async findAll(page : number, limit : number): Promise<NewArticle[]> {
     this.logger.log('Servicio: NewArticleService, Método: findAll');
 
     try {
@@ -47,7 +47,8 @@ export class NewArticleService {
         order: {
           id: 'DESC'
         },
-        take: 3
+        skip: (page - 1) * limit,
+        take: limit
       });
       if (newArticles.length === 0) {
         throw new NotFoundException({
