@@ -41,7 +41,7 @@ export class MainArticleService {
     }
   }
 
-  async findAll(): Promise<MainArticle[]> {
+  async findAll(page : number, limit : number): Promise<MainArticle[]> {
     this.logger.log('Servicio: MainArticleService, Método: findAll');
 
     try {
@@ -49,7 +49,8 @@ export class MainArticleService {
         order: {
           id: 'DESC'
         },
-        take: 1
+        skip: (page - 1) * limit,
+        take: limit
       });
       if (mainArticles.length === 0) {
         throw new NotFoundException({

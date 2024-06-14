@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, Query } from '@nestjs/common';
 import { MainArticleService } from './main-article.service';
 import { CreateMainArticleDto } from './dto/create-main-article.dto';
 import { UpdateMainArticleDto } from './dto/update-main-article.dto';
@@ -31,8 +31,8 @@ export class MainArticleController {
   @ApiOkResponse({ description: 'Todos los artículos principales se han recuperado exitosamente.' })
   @ApiNotFoundResponse({ description: 'No se encontraron artículos principales.' })
   @ApiBadRequestResponse({ description: 'Solicitud incorrecta.' })
-  findAll() {
-    return this.mainArticleService.findAll();
+  findAll(@Query('page') page: number = 1, @Query('limit') limit: number = 5) {
+    return this.mainArticleService.findAll(page, limit);
   }
 
   @Get(':id')
