@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UploadedFile, UseInterceptors, Query } from '@nestjs/common';
 import { CursosService } from './cursos.service';
 import { CreateCursoDto } from './dto/create-curso.dto';
 import { UpdateCursoDto } from './dto/update-curso.dto';
@@ -31,8 +31,8 @@ export class CursosController {
   @ApiOkResponse({ description: 'Todos los cursos se han recuperado exitosamente.' })
   @ApiNotFoundResponse({ description: 'No se encontraron cursos.' })
   @ApiBadRequestResponse({ description: 'Solicitud incorrecta.' })
-  findAll() {
-    return this.cursosService.findAll();
+  findAll(@Query('page') page: number = 1, @Query('limit') limit: number = 5) {
+    return this.cursosService.findAll(page, limit);
   }
 
   @Get(':id')

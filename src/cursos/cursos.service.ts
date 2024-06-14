@@ -41,14 +41,16 @@ export class CursosService {
     }
   }
 
-  async findAll(): Promise<Curso[]> {
+  async findAll(page : number, limit : number): Promise<Curso[]> {
     this.logger.log('Servicio: CursosService, Método: findAll');
 
     try {
       const cursos = await this.cursoRepository.find({
         order: {
           id: 'DESC'
-        }
+        },
+        skip: (page - 1) * limit,
+        take: limit
       });
       if (cursos.length === 0) {
         throw new NotFoundException({
