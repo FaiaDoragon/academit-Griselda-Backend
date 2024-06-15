@@ -1,4 +1,10 @@
-import { Injectable, NotFoundException, InternalServerErrorException, BadRequestException, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  InternalServerErrorException,
+  BadRequestException,
+  Logger,
+} from '@nestjs/common';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -15,10 +21,17 @@ export class ArticlesService {
     private articleRepository: Repository<Article>,
   ) {}
 
-  async create(articleData: CreateArticleDto, file: any): Promise<ArticleResponseDto> {
-    this.logger.log(`Servicio: ArticlesService, Método: create, Args: ${JSON.stringify({ articleData, file })}`);
+  async create(
+    articleData: CreateArticleDto,
+    file: any,
+  ): Promise<ArticleResponseDto> {
+    this.logger.log(
+      `Servicio: ArticlesService, Método: create, Args: ${JSON.stringify({ articleData, file })}`,
+    );
 
-    let articleData2 = file ? { ...articleData, image: file.path } : articleData;
+    let articleData2 = file
+      ? { ...articleData, image: file.path }
+      : articleData;
 
     try {
       const article = this.articleRepository.create(articleData2);
@@ -28,16 +41,18 @@ export class ArticlesService {
         throw new NotFoundException({
           message: 'No se creó el artículo.',
           error: 'Bad Request',
-          statusCode: 400
+          statusCode: 400,
         });
       }
       return this.entityToResponseDto(article); // Mapea la entidad a DTO de respuesta antes de devolverla
     } catch (error) {
-      this.logger.error(`Error en Servicio: ArticlesService, Método: create, Args: ${JSON.stringify({ articleData, file })}, Error: ${error.message}`);
+      this.logger.error(
+        `Error en Servicio: ArticlesService, Método: create, Args: ${JSON.stringify({ articleData, file })}, Error: ${error.message}`,
+      );
       throw new InternalServerErrorException({
         message: error.message,
         error: error.response?.error,
-        statusCode: error.status
+        statusCode: error.status,
       });
     }
   }
@@ -48,23 +63,25 @@ export class ArticlesService {
     try {
       const articles = await this.articleRepository.find({
         order: {
-          id: 'DESC'
+          id: 'DESC',
         },
       });
       if (articles.length === 0) {
         throw new NotFoundException({
           message: 'No se encontraron artículos.',
           error: 'Not Found',
-          statusCode: 404
+          statusCode: 404,
         });
       }
-      return articles.map(article => this.entityToResponseDto(article)); // Mapea todas las entidades a DTO de respuesta
+      return articles.map((article) => this.entityToResponseDto(article)); // Mapea todas las entidades a DTO de respuesta
     } catch (error) {
-      this.logger.error(`Error en Servicio: ArticlesService, Método: findAll, Error: ${error.message}`);
+      this.logger.error(
+        `Error en Servicio: ArticlesService, Método: findAll, Error: ${error.message}`,
+      );
       throw new InternalServerErrorException({
         message: error.message,
         error: error.response?.error,
-        statusCode: error.status
+        statusCode: error.status,
       });
     }
   }
@@ -78,24 +95,34 @@ export class ArticlesService {
         throw new NotFoundException({
           message: `El artículo con el ID ${id} no se encontró.`,
           error: 'Not Found',
-          statusCode: 404
+          statusCode: 404,
         });
       }
       return this.entityToResponseDto(article); // Mapea la entidad a DTO de respuesta antes de devolverla
     } catch (error) {
-      this.logger.error(`Error en Servicio: ArticlesService, Método: findOne, Args: ${id}, Error: ${error.message}`);
+      this.logger.error(
+        `Error en Servicio: ArticlesService, Método: findOne, Args: ${id}, Error: ${error.message}`,
+      );
       throw new InternalServerErrorException({
         message: error.message,
         error: error.response?.error,
-        statusCode: error.status
+        statusCode: error.status,
       });
     }
   }
 
-  async update(id: number, updateArticleDto: UpdateArticleDto, file: any): Promise<ArticleResponseDto> {
-    this.logger.log(`Servicio: ArticlesService, Método: update, Args: ${JSON.stringify({ id, updateArticleDto, file })}`);
+  async update(
+    id: number,
+    updateArticleDto: UpdateArticleDto,
+    file: any,
+  ): Promise<ArticleResponseDto> {
+    this.logger.log(
+      `Servicio: ArticlesService, Método: update, Args: ${JSON.stringify({ id, updateArticleDto, file })}`,
+    );
 
-    const articleData = file ? { ...updateArticleDto, image: file.path } : updateArticleDto;
+    const articleData = file
+      ? { ...updateArticleDto, image: file.path }
+      : updateArticleDto;
 
     try {
       const result = await this.articleRepository.update(id, articleData);
@@ -103,17 +130,19 @@ export class ArticlesService {
         throw new NotFoundException({
           message: `El artículo con el ID ${id} no se encontró.`,
           error: 'Not Found',
-          statusCode: 404
+          statusCode: 404,
         });
       }
       const article = await this.findOne(id);
       return article;
     } catch (error) {
-      this.logger.error(`Error en Servicio: ArticlesService, Método: update, Args: ${JSON.stringify({ id, updateArticleDto, file })}, Error: ${error.message}`);
+      this.logger.error(
+        `Error en Servicio: ArticlesService, Método: update, Args: ${JSON.stringify({ id, updateArticleDto, file })}, Error: ${error.message}`,
+      );
       throw new InternalServerErrorException({
         message: error.message,
         error: error.response?.error,
-        statusCode: error.status
+        statusCode: error.status,
       });
     }
   }
@@ -127,15 +156,17 @@ export class ArticlesService {
         throw new NotFoundException({
           message: `El artículo con el ID ${id} no se encontró.`,
           error: 'Not Found',
-          statusCode: 404
+          statusCode: 404,
         });
       }
     } catch (error) {
-      this.logger.error(`Error en Servicio: ArticlesService, Método: remove, Args: ${id}, Error: ${error.message}`);
+      this.logger.error(
+        `Error en Servicio: ArticlesService, Método: remove, Args: ${id}, Error: ${error.message}`,
+      );
       throw new InternalServerErrorException({
         message: error.message,
         error: error.response?.error,
-        statusCode: error.status
+        statusCode: error.status,
       });
     }
   }

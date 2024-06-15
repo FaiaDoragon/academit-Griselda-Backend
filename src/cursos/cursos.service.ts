@@ -1,4 +1,9 @@
-import { Injectable, InternalServerErrorException, NotFoundException, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+  Logger,
+} from '@nestjs/common';
 import { CreateCursoDto } from './dto/create-curso.dto';
 import { UpdateCursoDto } from './dto/update-curso.dto';
 import { Curso } from './entities/curso.entity';
@@ -15,9 +20,13 @@ export class CursosService {
   ) {}
 
   async create(createCursoDto: CreateCursoDto, file: any): Promise<Curso> {
-    this.logger.log(`Servicio: CursosService, Método: create, Args: ${JSON.stringify({ createCursoDto, file })}`);
+    this.logger.log(
+      `Servicio: CursosService, Método: create, Args: ${JSON.stringify({ createCursoDto, file })}`,
+    );
 
-    let createCursoData = file ? { ...createCursoDto, video: file.path } : createCursoDto;
+    let createCursoData = file
+      ? { ...createCursoDto, video: file.path }
+      : createCursoDto;
 
     try {
       const curso = this.cursoRepository.create(createCursoData);
@@ -27,16 +36,18 @@ export class CursosService {
         throw new NotFoundException({
           message: 'Error al crear el curso.',
           error: 'Bad Request',
-          statusCode: 400
+          statusCode: 400,
         });
       }
       return curso;
     } catch (error) {
-      this.logger.error(`Error en Servicio: CursosService, Método: create, Args: ${JSON.stringify({ createCursoDto, file })}, Error: ${error.message}`);
+      this.logger.error(
+        `Error en Servicio: CursosService, Método: create, Args: ${JSON.stringify({ createCursoDto, file })}, Error: ${error.message}`,
+      );
       throw new InternalServerErrorException({
         message: error.message,
         error: error.response?.error,
-        statusCode: error.status
+        statusCode: error.status,
       });
     }
   }
@@ -47,23 +58,25 @@ export class CursosService {
     try {
       const cursos = await this.cursoRepository.find({
         order: {
-          id: 'DESC'
-        }
+          id: 'DESC',
+        },
       });
       if (cursos.length === 0) {
         throw new NotFoundException({
           message: 'No se encontraron cursos.',
           error: 'Not Found',
-          statusCode: 404
+          statusCode: 404,
         });
       }
       return cursos;
     } catch (error) {
-      this.logger.error(`Error en Servicio: CursosService, Método: findAll, Error: ${error.message}`);
+      this.logger.error(
+        `Error en Servicio: CursosService, Método: findAll, Error: ${error.message}`,
+      );
       throw new InternalServerErrorException({
         message: error.message,
         error: error.response?.error,
-        statusCode: error.status
+        statusCode: error.status,
       });
     }
   }
@@ -77,24 +90,34 @@ export class CursosService {
         throw new NotFoundException({
           message: `El curso con el ID ${id} no se encontró.`,
           error: 'Not Found',
-          statusCode: 404
+          statusCode: 404,
         });
       }
       return curso;
     } catch (error) {
-      this.logger.error(`Error en Servicio: CursosService, Método: findOne, Args: ${id}, Error: ${error.message}`);
+      this.logger.error(
+        `Error en Servicio: CursosService, Método: findOne, Args: ${id}, Error: ${error.message}`,
+      );
       throw new InternalServerErrorException({
         message: error.message,
         error: error.response?.error,
-        statusCode: error.status
+        statusCode: error.status,
       });
     }
   }
 
-  async update(id: number, updateCursoDto: UpdateCursoDto, file: any): Promise<Curso> {
-    this.logger.log(`Servicio: CursosService, Método: update, Args: ${JSON.stringify({ id, updateCursoDto, file })}`);
+  async update(
+    id: number,
+    updateCursoDto: UpdateCursoDto,
+    file: any,
+  ): Promise<Curso> {
+    this.logger.log(
+      `Servicio: CursosService, Método: update, Args: ${JSON.stringify({ id, updateCursoDto, file })}`,
+    );
 
-    let updateCursoData = file ? { ...updateCursoDto, video: file.path } : updateCursoDto;
+    let updateCursoData = file
+      ? { ...updateCursoDto, video: file.path }
+      : updateCursoDto;
 
     try {
       const result = await this.cursoRepository.update(id, updateCursoData);
@@ -102,17 +125,19 @@ export class CursosService {
         throw new NotFoundException({
           message: `El curso con el ID ${id} no se encontró.`,
           error: 'Not Found',
-          statusCode: 404
+          statusCode: 404,
         });
       }
       const curso = await this.findOne(id);
       return curso;
     } catch (error) {
-      this.logger.error(`Error en Servicio: CursosService, Método: update, Args: ${JSON.stringify({ id, updateCursoDto, file })}, Error: ${error.message}`);
+      this.logger.error(
+        `Error en Servicio: CursosService, Método: update, Args: ${JSON.stringify({ id, updateCursoDto, file })}, Error: ${error.message}`,
+      );
       throw new InternalServerErrorException({
         message: error.message,
         error: error.response?.error,
-        statusCode: error.status
+        statusCode: error.status,
       });
     }
   }
@@ -126,15 +151,17 @@ export class CursosService {
         throw new NotFoundException({
           message: `El curso con el ID ${id} no se encontró.`,
           error: 'Not Found',
-          statusCode: 404
+          statusCode: 404,
         });
       }
     } catch (error) {
-      this.logger.error(`Error en Servicio: CursosService, Método: remove, Args: ${id}, Error: ${error.message}`);
+      this.logger.error(
+        `Error en Servicio: CursosService, Método: remove, Args: ${id}, Error: ${error.message}`,
+      );
       throw new InternalServerErrorException({
         message: error.message,
         error: error.response?.error,
-        statusCode: error.status
+        statusCode: error.status,
       });
     }
   }

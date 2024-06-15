@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException, InternalServerErrorException, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  InternalServerErrorException,
+  Logger,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Header } from './entities/header.entity';
 import { Repository } from 'typeorm';
@@ -15,10 +20,14 @@ export class HeadersService {
   ) {}
 
   async create(headerItemDto: CreateHeaderItemDto, file: any): Promise<Header> {
-    this.logger.log(`Servicio: HeadersService, Método: create, Args: ${JSON.stringify({ headerItemDto, file })}`);
+    this.logger.log(
+      `Servicio: HeadersService, Método: create, Args: ${JSON.stringify({ headerItemDto, file })}`,
+    );
 
-    let CreateHeaderItemData = file ? { ...headerItemDto, logo: file.path } : headerItemDto;
-    
+    const CreateHeaderItemData = file
+      ? { ...headerItemDto, logo: file.path }
+      : headerItemDto;
+
     try {
       const items = this.headersRepository.create(CreateHeaderItemData);
       await this.headersRepository.save(items);
@@ -27,16 +36,18 @@ export class HeadersService {
         throw new NotFoundException({
           message: 'Error al crear el Header.',
           error: 'Bad Request',
-          statusCode: 400
+          statusCode: 400,
         });
       }
       return items;
     } catch (error) {
-      this.logger.error(`Error en Servicio: HeadersService, Método: create, Args: ${JSON.stringify({ headerItemDto, file })}, Error: ${error.message}`);
+      this.logger.error(
+        `Error en Servicio: HeadersService, Método: create, Args: ${JSON.stringify({ headerItemDto, file })}, Error: ${error.message}`,
+      );
       throw new InternalServerErrorException({
         message: error.message,
         error: error.response?.error,
-        statusCode: error.status
+        statusCode: error.status,
       });
     }
   }
@@ -44,29 +55,23 @@ export class HeadersService {
   async findAll(): Promise<Header[]> {
     this.logger.log('Servicio: HeadersService, Método: findAll');
 
-    try {
-      const items = await this.headersRepository.find({
-        order: {
-          id: 'DESC'
-        },
-        take: 1
-      });
-      if (items.length === 0) {
-        throw new NotFoundException({
-          message: 'No se encontraron encabezados.',
-          error: 'Not Found',
-          statusCode: 404
-        });
-      }
-      return items;
-    } catch (error) {
-      this.logger.error(`Error en Servicio: HeadersService, Método: findAll, Error: ${error.message}`);
-      throw new InternalServerErrorException({
-        message: error.message,
-        error: error.response?.error,
-        statusCode: error.status
+    const items = await this.headersRepository.find({
+      order: {
+        id: 'DESC',
+      },
+      take: 1,
+    });
+    if (items.length === 0) {
+      this.logger.error(
+        `Error en Servicio: HeadersService, Método: findAll, Error: No se encontraron encabezados. `,
+      );
+      throw new NotFoundException({
+        message: 'No se encontraron encabezados.',
+        error: 'Not Found',
+        statusCode: 404,
       });
     }
+    return items;
   }
 
   async findOne(id: number): Promise<Header> {
@@ -78,24 +83,34 @@ export class HeadersService {
         throw new NotFoundException({
           message: `El encabezado con el ID ${id} no se encontró.`,
           error: 'Not Found',
-          statusCode: 404
+          statusCode: 404,
         });
       }
       return item;
     } catch (error) {
-      this.logger.error(`Error en Servicio: HeadersService, Método: findOne, Args: ${id}, Error: ${error.message}`);
+      this.logger.error(
+        `Error en Servicio: HeadersService, Método: findOne, Args: ${id}, Error: ${error.message}`,
+      );
       throw new InternalServerErrorException({
         message: error.message,
         error: error.response?.error,
-        statusCode: error.status
+        statusCode: error.status,
       });
     }
   }
 
-  async update(id: number, updateHeaderDto: UpdateHeaderDto, file: any): Promise<Header> {
-    this.logger.log(`Servicio: HeadersService, Método: update, Args: ${JSON.stringify({ id, updateHeaderDto, file })}`);
+  async update(
+    id: number,
+    updateHeaderDto: UpdateHeaderDto,
+    file: any,
+  ): Promise<Header> {
+    this.logger.log(
+      `Servicio: HeadersService, Método: update, Args: ${JSON.stringify({ id, updateHeaderDto, file })}`,
+    );
 
-    let updateHeaderData = file ? { ...updateHeaderDto, logo: file.path } : updateHeaderDto;
+    let updateHeaderData = file
+      ? { ...updateHeaderDto, logo: file.path }
+      : updateHeaderDto;
 
     try {
       const result = await this.headersRepository.update(id, updateHeaderData);
@@ -103,17 +118,19 @@ export class HeadersService {
         throw new NotFoundException({
           message: `El encabezado con el ID ${id} no se encontró.`,
           error: 'Not Found',
-          statusCode: 404
+          statusCode: 404,
         });
       }
       const item = await this.findOne(id);
       return item;
     } catch (error) {
-      this.logger.error(`Error en Servicio: HeadersService, Método: update, Args: ${JSON.stringify({ id, updateHeaderDto, file })}, Error: ${error.message}`);
+      this.logger.error(
+        `Error en Servicio: HeadersService, Método: update, Args: ${JSON.stringify({ id, updateHeaderDto, file })}, Error: ${error.message}`,
+      );
       throw new InternalServerErrorException({
         message: error.message,
         error: error.response?.error,
-        statusCode: error.status
+        statusCode: error.status,
       });
     }
   }
@@ -127,15 +144,17 @@ export class HeadersService {
         throw new NotFoundException({
           message: `El encabezado con el ID ${id} no se encontró.`,
           error: 'Not Found',
-          statusCode: 404
+          statusCode: 404,
         });
       }
     } catch (error) {
-      this.logger.error(`Error en Servicio: HeadersService, Método: remove, Args: ${id}, Error: ${error.message}`);
+      this.logger.error(
+        `Error en Servicio: HeadersService, Método: remove, Args: ${id}, Error: ${error.message}`,
+      );
       throw new InternalServerErrorException({
         message: error.message,
         error: error.response?.error,
-        statusCode: error.status
+        statusCode: error.status,
       });
     }
   }

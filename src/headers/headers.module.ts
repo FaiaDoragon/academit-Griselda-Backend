@@ -7,9 +7,10 @@ import { MulterModule } from '@nestjs/platform-express';
 import { multerConfigImages } from '../multer.config';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Header]),
-  MulterModule.register({ ...multerConfigImages }),
-],
+  imports: [
+    TypeOrmModule.forFeature([Header]),
+    MulterModule.register({ ...multerConfigImages }),
+  ],
   controllers: [HeadersController],
   providers: [HeadersService],
 })
