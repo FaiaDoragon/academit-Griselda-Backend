@@ -18,27 +18,33 @@ import { Curso } from './cursos/entities/curso.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forRootAsync({
-      imports: [ConfigModule], // Importa ConfigModule para usar ConfigService
-      inject: [ConfigService], // Inyecta ConfigService en la configuración asíncrona
-      useFactory: async (configService: ConfigService) => ({
-        type: 'mysql',
-        host: configService.get<string>('DB_HOST'), // Obtiene las variables de entorno de forma segura
-        port: configService.get<number>('DB_PORT'),
-        username: configService.get<string>('DB_USERNAME'),
-        password: configService.get<string>('DB_PASSWORD'),
-        database: configService.get<string>('DB_NAME'),
-        entities: [Header, Article, MainArticle, NewArticle, Curso],
-        synchronize:
-          configService.get<string>('ENV') === 'develop' ? true : false,
-      }),
-    }),
     ConfigModule.forRoot({
       isGlobal: true, // Hace que ConfigModule esté disponible globalmente
     }),
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule], // Importa ConfigModule para usar ConfigService
+      inject: [ConfigService], // Inyecta ConfigService en la configuración asíncrona
+      useFactory: async (configService: ConfigService) => {
+        const isDevelopment = configService.get<string>('ENV') === 'develop';
+
+        return {
+          type: 'mysql',
+          host: configService.get<string>('DB_HOST'), // Obtiene las variables de entorno de forma segura
+          port: configService.get<number>('DB_PORT'),
+          username: configService.get<string>('DB_USERNAME'),
+          password: configService.get<string>('DB_PASSWORD'),
+          database: configService.get<string>('DB_NAME'),
+          entities: [Header, Article, MainArticle, NewArticle, Curso],
+          synchronize: isDevelopment,
+          // logging: isDevelopment ? 'all' : ['error'], // Solo loguea todos los queries en desarrollo
+          retryAttempts: 5, // Intentos de reintento en caso de fallo de conexión
+          retryDelay: 3000, // Milisegundos entre cada intento de reintento
+        };
+      },
+    }),
     ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'uploads/'), // ruta de la carpeta de imágenes
-      serveRoot: '/uploads/', // ruta base desde donde se servirán las imágenes
+      rootPath: join(__dirname, '..', 'uploads/'), // Ruta de la carpeta de imágenes
+      serveRoot: '/uploads/', // Ruta base desde donde se servirán las imágenes
     }),
     ArticlesModule,
     HeadersModule,

@@ -7,8 +7,10 @@ import { Curso } from './entities/curso.entity';
 import { multerConfigVideos } from '../multer.config';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Curso]),
-  MulterModule.register({ ...multerConfigVideos }),],
+  imports: [
+    TypeOrmModule.forFeature([Curso]),
+    MulterModule.register({ ...multerConfigVideos }),
+  ],
   controllers: [CursosController],
   providers: [CursosService],
 })
