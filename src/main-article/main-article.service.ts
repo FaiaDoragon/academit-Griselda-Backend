@@ -5,7 +5,7 @@ import {
   Logger,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { FindOptionsWhere, Repository } from 'typeorm';
 import { MainArticle } from './entities/main-article.entity';
 import { CreateMainArticleDto } from './dto/create-main-article.dto';
 import { UpdateMainArticleDto } from './dto/update-main-article.dto';
@@ -17,7 +17,7 @@ export class MainArticleService {
   constructor(
     @InjectRepository(MainArticle)
     private mainArticleRepository: Repository<MainArticle>,
-  ) {}
+  ) { }
 
   async create(
     mainArticleDto: CreateMainArticleDto,
@@ -55,35 +55,75 @@ export class MainArticleService {
     }
   }
 
-  async findAll(page: number, limit: number): Promise<MainArticle[]> {
+  async findAll(
+    page: number, 
+    limit: number,
+    searchParams?: { [key: string]: string },
+  ): Promise<{
+    data: MainArticle[];
+    pagination: { totalItems: number; pageCount: number; currentPage: number };
+  }> {
     this.logger.log('Servicio: MainArticleService, Método: findAll');
 
-    try {
-      const mainArticles = await this.mainArticleRepository.find({
-        order: {
-          id: 'DESC',
-        },
-        skip: (page - 1) * limit,
-        take: limit,
-      });
-      if (mainArticles.length === 0) {
-        throw new NotFoundException({
-          message: 'No se encontraron artículos principales.',
-          error: 'Not Found',
-          statusCode: 404,
-        });
-      }
-      return mainArticles;
-    } catch (error) {
-      this.logger.error(
-        `Error en Servicio: MainArticleService, Método: findAll, Error: ${error.message}`,
-      );
-      throw new InternalServerErrorException({
-        message: error.message,
-        error: error.response?.error,
-        statusCode: error.status,
+    const { id, title, description, textButton, image } = searchParams;
+
+    const dataFilter = { id, title, description, textButton, image };
+
+    const where: FindOptionsWhere<MainArticle> = {};
+
+    if (dataFilter) {
+      Object.keys(searchParams).forEach((key) => {
+        if (dataFilter[key] && !['page', 'limit'].includes(key)) {
+          where[key] = dataFilter[key];
+        }
       });
     }
+
+    const [mainArticles, total] = await this.mainArticleRepository.findAndCount({
+      where,
+      skip: (+page - 1) * limit,
+      take: limit,
+    });
+
+    if (mainArticles.length === 0) {
+      throw new NotFoundException('No se encontraron encabezados.');
+    }
+
+    const pagination = {
+      totalItems: total,
+      pageCount: Math.ceil(total / limit),
+      currentPage: page,
+    };
+
+    return { data: mainArticles, pagination };
+
+
+    // try {
+    //   const mainArticles = await this.mainArticleRepository.find({
+    //     order: {
+    //       id: 'DESC',
+    //     },
+    //     skip: (page - 1) * limit,
+    //     take: limit,
+    //   });
+    //   if (mainArticles.length === 0) {
+    //     throw new NotFoundException({
+    //       message: 'No se encontraron artículos principales.',
+    //       error: 'Not Found',
+    //       statusCode: 404,
+    //     });
+    //   }
+    //   return mainArticles;
+    // } catch (error) {
+    //   this.logger.error(
+    //     `Error en Servicio: MainArticleService, Método: findAll, Error: ${error.message}`,
+    //   );
+    //   throw new InternalServerErrorException({
+    //     message: error.message,
+    //     error: error.response?.error,
+    //     statusCode: error.status,
+    //   });
+    // }
   }
 
   async findOne(id: number): Promise<MainArticle> {

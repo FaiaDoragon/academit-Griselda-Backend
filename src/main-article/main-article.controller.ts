@@ -77,8 +77,12 @@ export class MainArticleController {
     description: 'No se encontraron artículos principales.',
   })
   @ApiBadRequestResponse({ description: 'Solicitud incorrecta.' })
-  findAll(@Query('page') page: number = 1, @Query('limit') limit: number = 5) {
-    return this.mainArticleService.findAll(page, limit);
+  findAll(
+    @Query('page') page: number = 1, 
+    @Query('limit') limit: number = 5,
+    @Query() searchParams: { [key: string]: string },
+  ) {
+    return this.mainArticleService.findAll(page, limit, searchParams);
   }
 
   @Get(':id')
@@ -123,7 +127,7 @@ export class MainArticleController {
   update(
     @Param('id') id: number,
     @Body() updateMainArticleDto: UpdateMainArticleDto,
-    @UploadedFile() file: any,
+    @UploadedFile() file: Express.Multer.File,
   ) {
     return this.mainArticleService.update(id, updateMainArticleDto, file);
   }
@@ -138,7 +142,7 @@ export class MainArticleController {
   })
   @ApiNotFoundResponse({ description: 'Artículo principal no encontrado.' })
   @ApiBadRequestResponse({ description: 'Solicitud incorrecta.' })
-  remove(@Param('id') id: number) {
-    return this.mainArticleService.remove(id);
+  remove(@Param('id') id: string) {
+    return this.mainArticleService.remove(+id);
   }
 }
