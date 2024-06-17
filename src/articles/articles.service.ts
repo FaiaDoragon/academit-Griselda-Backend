@@ -73,9 +73,9 @@ export class ArticlesService {
   }> {
     this.logger.log('Servicio: ArticlesService, Método: findAll');
 
-    const { id, title, description, textButton, image } = searchParams;
+    const { id, title, description, image } = searchParams;
 
-    const dataFilter = { id, title, description, textButton, image };
+    const dataFilter = { id, title, description, image };
 
     const where: FindOptionsWhere<Article> = {};
 

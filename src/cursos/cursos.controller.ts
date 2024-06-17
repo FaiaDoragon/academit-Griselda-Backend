@@ -54,7 +54,7 @@ export class CursosController {
     type: CreateCursoDto,
     required: true,
   })
-  create(@Body() createCursoDto: CreateCursoDto, @UploadedFile() file: any) {
+  create(@Body() createCursoDto: CreateCursoDto, @UploadedFile() file: Express.Multer.File) {
     return this.cursosService.create(createCursoDto, file);
   }
 
@@ -68,8 +68,13 @@ export class CursosController {
   })
   @ApiNotFoundResponse({ description: 'No se encontraron cursos.' })
   @ApiBadRequestResponse({ description: 'Solicitud incorrecta.' })
-  findAll(@Query('page') page: number = 1, @Query('limit') limit: number = 5) {
-    return this.cursosService.findAll(page, limit);
+  findAll(
+    @Query('page') page: number = 1, 
+    @Query('limit') limit: number = 5,
+    @Query() searchParams: { [key: string]: string },
+  ) {
+    
+    return this.cursosService.findAll(page, limit, searchParams);
   }
 
   @Get(':id')
@@ -110,7 +115,7 @@ export class CursosController {
   update(
     @Param('id') id: number,
     @Body() updateCursoDto: UpdateCursoDto,
-    @UploadedFile() file: any,
+    @UploadedFile() file: Express.Multer.File,
   ) {
     return this.cursosService.update(id, updateCursoDto, file);
   }
