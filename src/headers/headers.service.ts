@@ -17,7 +17,7 @@ export class HeadersService {
   constructor(
     @InjectRepository(Header)
     private headersRepository: Repository<Header>,
-  ) { }
+  ) {}
 
   async create(headerItemDto: CreateHeaderItemDto, file: any): Promise<Header> {
     this.logger.log(
@@ -50,12 +50,16 @@ export class HeadersService {
   }> {
     this.logger.log('Servicio: HeadersService, Método: findAll');
 
+    const { id, item01, item02, item03, item04 } = searchParams;
+
+    const dataFilter = { id, item01, item02, item03, item04 };
+
     const where: FindOptionsWhere<Header> = {};
 
-    if (searchParams) {
+    if (dataFilter) {
       Object.keys(searchParams).forEach((key) => {
-        if (searchParams[key] && !['page', 'limit'].includes(key)) {
-          where[key] = searchParams[key];
+        if (dataFilter[key] && !['page', 'limit'].includes(key)) {
+          where[key] = dataFilter[key];
         }
       });
     }
