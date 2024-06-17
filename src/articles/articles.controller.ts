@@ -82,8 +82,9 @@ export class ArticlesController {
   async findAll(
     @Query('page') page: number = 1,
     @Query('limit') limit: number = 5,
-  ): Promise<ArticleResponseDto[]> {
-    return await this.articlesService.findAll(page, limit);
+    @Query() searchParams: { [key: string]: string },
+  ) {
+    return await this.articlesService.findAll(page, limit, searchParams);
   }
 
   @Get(':id')
@@ -131,7 +132,7 @@ export class ArticlesController {
   async update(
     @Param('id') id: string,
     @Body() updateArticleDto: UpdateArticleDto,
-    @UploadedFile() file: any,
+    @UploadedFile() file: Express.Multer.File,
   ): Promise<ArticleResponseDto> {
     return await this.articlesService.update(+id, updateArticleDto, file);
   }

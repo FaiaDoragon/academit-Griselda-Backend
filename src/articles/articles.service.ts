@@ -9,7 +9,7 @@ import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Article } from './entities/article.entity';
-import { Repository } from 'typeorm';
+import { FindOptionsWhere, Repository } from 'typeorm';
 import { ArticleResponseDto } from './dto/response-article.dto'; // Importa el DTO de respuesta
 
 @Injectable()
@@ -19,7 +19,7 @@ export class ArticlesService {
   constructor(
     @InjectRepository(Article)
     private articleRepository: Repository<Article>,
-  ) {}
+  ) { }
 
   // Método para mapear la entidad a DTO de respuesta
   private entityToResponseDto(article: Article): ArticleResponseDto {
@@ -63,36 +63,49 @@ export class ArticlesService {
     }
   }
 
-  async findAll(page: number, limit: number): Promise<ArticleResponseDto[]> {
+  async findAll(
+    page: number,
+    limit: number,
+    searchParams?: { [key: string]: string },
+  ): Promise<{
+    data: Article[];
+    pagination: { totalItems: number; pageCount: number; currentPage: number };
+  }> {
     this.logger.log('Servicio: ArticlesService, Método: findAll');
 
-    try {
-      const articles = await this.articleRepository.find({
-        order: {
-          id: 'DESC',
-        },
-        skip: (page - 1) * limit,
-        take: limit,
-      });
+    const { id, title, description, textButton, image } = searchParams;
 
-      if (articles.length === 0) {
-        throw new NotFoundException({
-          message: 'No se encontraron artículos.',
-          error: 'Not Found',
-          statusCode: 404,
-        });
-      }
-      return articles.map((article) => this.entityToResponseDto(article)); // Mapea todas las entidades a DTO de respuesta
-    } catch (error) {
-      this.logger.error(
-        `Error en Servicio: ArticlesService, Método: findAll, Error: ${error.message}`,
-      );
-      throw new InternalServerErrorException({
-        message: error.message,
-        error: error.response?.error,
-        statusCode: error.status,
+    const dataFilter = { id, title, description, textButton, image };
+
+    const where: FindOptionsWhere<Article> = {};
+
+    if (dataFilter) {
+      Object.keys(searchParams).forEach((key) => {
+        if (dataFilter[key] && !['page', 'limit'].includes(key)) {
+          where[key] = dataFilter[key];
+        }
       });
     }
+
+    const [Article, total] = await this.articleRepository.findAndCount({
+      where,
+      skip: (+page - 1) * limit,
+      take: limit,
+    });
+
+    if (Article.length === 0) {
+      throw new NotFoundException('No se encontraron encabezados.');
+    }
+
+    const pagination = {
+      totalItems: total,
+      pageCount: Math.ceil(total / limit),
+      currentPage: page,
+    };
+
+    return { data: Article, pagination };
+
+
   }
 
   async findOne(id: number): Promise<ArticleResponseDto> {
