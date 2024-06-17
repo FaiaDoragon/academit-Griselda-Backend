@@ -31,20 +31,23 @@ import { FileInterceptor } from '@nestjs/platform-express';
 @ApiTags('Headers')
 @Controller('headers')
 export class HeadersController {
-  constructor(private readonly headersService: HeadersService) { }
+  constructor(private readonly headersService: HeadersService) {}
 
   @Post()
   @UseInterceptors(FileInterceptor('logo'))
   @ApiOperation({
     summary: 'Crear un nuevo header',
-    description: 'Crea un nuevo header con los datos proporcionados y opcionalmente un logo.',
+    description:
+      'Crea un nuevo header con los datos proporcionados y opcionalmente un logo.',
   })
   @ApiCreatedResponse({ description: 'El header se ha creado exitosamente.' })
   @ApiBadRequestResponse({
-    description: 'Solicitud incorrecta. Por favor, revisa tus datos de entrada.',
+    description:
+      'Solicitud incorrecta. Por favor, revisa tus datos de entrada.',
   })
   @ApiInternalServerErrorResponse({
-    description: 'Error interno del servidor. Por favor, intenta nuevamente más tarde.',
+    description:
+      'Error interno del servidor. Por favor, intenta nuevamente más tarde.',
   })
   @ApiConsumes('multipart/form-data')
   @ApiBody({
@@ -54,7 +57,7 @@ export class HeadersController {
   })
   create(
     @Body() createHeaderDto: CreateHeaderItemDto,
-    @UploadedFile() file: any,
+    @UploadedFile('file') file: Express.Multer.File,
   ) {
     return this.headersService.create(createHeaderDto, file);
   }
@@ -113,15 +116,18 @@ export class HeadersController {
   @UseInterceptors(FileInterceptor('logo'))
   @ApiOperation({
     summary: 'Actualizar un header',
-    description: 'Actualiza los datos de un header existente y opcionalmente su logo.',
+    description:
+      'Actualiza los datos de un header existente y opcionalmente su logo.',
   })
   @ApiOkResponse({ description: 'El header se ha actualizado exitosamente.' })
   @ApiNotFoundResponse({ description: 'Header no encontrado.' })
   @ApiBadRequestResponse({
-    description: 'Solicitud incorrecta. Por favor, revisa tus datos de entrada.',
+    description:
+      'Solicitud incorrecta. Por favor, revisa tus datos de entrada.',
   })
   @ApiInternalServerErrorResponse({
-    description: 'Error interno del servidor. Por favor, intenta nuevamente más tarde.',
+    description:
+      'Error interno del servidor. Por favor, intenta nuevamente más tarde.',
   })
   @ApiConsumes('multipart/form-data')
   @ApiBody({
@@ -132,7 +138,7 @@ export class HeadersController {
   update(
     @Param('id') id: number,
     @Body() updateHeaderDto: UpdateHeaderDto,
-    @UploadedFile() file: any,
+    @UploadedFile() file: Express.Multer.File,
   ) {
     return this.headersService.update(id, updateHeaderDto, file);
   }

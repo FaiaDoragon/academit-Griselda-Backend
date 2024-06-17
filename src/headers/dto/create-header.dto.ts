@@ -1,10 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { IsOptional, IsString, IsUrl } from 'class-validator';
 
 export class CreateHeaderItemDto {
   @ApiProperty({
     description: 'Texto para el primer elemento del header',
     example: 'Inicio',
   })
+  @IsString()
   item01: string;
 
   @ApiProperty({
@@ -13,6 +15,8 @@ export class CreateHeaderItemDto {
     required: false,
     nullable: true,
   })
+  @IsOptional()
+  @IsString()
   item02?: string;
 
   @ApiProperty({
@@ -21,6 +25,8 @@ export class CreateHeaderItemDto {
     required: false,
     nullable: true,
   })
+  @IsOptional()
+  @IsString()
   item03?: string;
 
   @ApiProperty({
@@ -29,6 +35,8 @@ export class CreateHeaderItemDto {
     required: false,
     nullable: true,
   })
+  @IsOptional()
+  @IsString()
   item04?: string;
 
   @ApiProperty({
@@ -37,5 +45,9 @@ export class CreateHeaderItemDto {
     required: false,
     nullable: true,
   })
+  @IsOptional()
+  @IsUrl()
   logo?: string;
 }
+
+export class UpdateHeaderDto extends CreateHeaderItemDto { }
