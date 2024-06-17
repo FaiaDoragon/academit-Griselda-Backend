@@ -61,8 +61,12 @@ export class NewArticleController {
   })
   @ApiNotFoundResponse({ description: 'No se encontraron artículos.' })
   @ApiBadRequestResponse({ description: 'Solicitud incorrecta.' })
-  findAll(@Query('page') page: number = 1, @Query('limit') limit: number = 5) {
-    return this.newArticleService.findAll(page, limit);
+  findAll(
+    @Query('page') page: number = 1, 
+    @Query('limit') limit: number = 5,
+    @Query() searchParams: { [key: string]: string },
+  ) {
+    return this.newArticleService.findAll(page, limit, searchParams);
   }
 
   @Get(':id')

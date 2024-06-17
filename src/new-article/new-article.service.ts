@@ -7,7 +7,7 @@ import {
 import { CreateNewArticleDto } from './dto/create-new-article.dto';
 import { UpdateNewArticleDto } from './dto/update-new-article.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { FindOptionsWhere, Repository } from 'typeorm';
 import { NewArticle } from './entities/new-article.entity';
 
 @Injectable()
@@ -17,7 +17,7 @@ export class NewArticleService {
   constructor(
     @InjectRepository(NewArticle)
     private newArticleRepository: Repository<NewArticle>,
-  ) {}
+  ) { }
 
   async create(createNewArticleDto: CreateNewArticleDto): Promise<NewArticle> {
     this.logger.log(
@@ -48,35 +48,47 @@ export class NewArticleService {
     }
   }
 
-  async findAll(page: number, limit: number): Promise<NewArticle[]> {
+  async findAll(
+    page: number,
+    limit: number,
+    searchParams?: { [key: string]: string },
+  ): Promise<{
+    data: NewArticle[];
+    pagination: { totalItems: number; pageCount: number; currentPage: number };
+  }> {
     this.logger.log('Servicio: NewArticleService, Método: findAll');
 
-    try {
-      const newArticles = await this.newArticleRepository.find({
-        order: {
-          id: 'DESC',
-        },
-        skip: (page - 1) * limit,
-        take: limit,
-      });
-      if (newArticles.length === 0) {
-        throw new NotFoundException({
-          message: 'No se encontraron nuevos artículos.',
-          error: 'Not Found',
-          statusCode: 404,
-        });
-      }
-      return newArticles;
-    } catch (error) {
-      this.logger.error(
-        `Error en Servicio: NewArticleService, Método: findAll, Error: ${error.message}`,
-      );
-      throw new InternalServerErrorException({
-        message: error.message,
-        error: error.response?.error,
-        statusCode: error.status,
+    const { id, sectiontitle, articletitle, description } = searchParams;
+
+    const dataFilter = { id, sectiontitle, articletitle, description };
+
+    const where: FindOptionsWhere<NewArticle> = {};
+
+    if (dataFilter) {
+      Object.keys(searchParams).forEach((key) => {
+        if (dataFilter[key] && !['page', 'limit'].includes(key)) {
+          where[key] = dataFilter[key];
+        }
       });
     }
+
+    const [newArticles, total] = await this.newArticleRepository.findAndCount({
+      where,
+      skip: (+page - 1) * limit,
+      take: limit,
+    });
+
+    if (newArticles.length === 0) {
+      throw new NotFoundException('No se encontraron encabezados.');
+    }
+
+    const pagination = {
+      totalItems: total,
+      pageCount: Math.ceil(total / limit),
+      currentPage: page,
+    };
+
+    return { data: newArticles, pagination };
   }
 
   async findOne(id: number): Promise<NewArticle> {
