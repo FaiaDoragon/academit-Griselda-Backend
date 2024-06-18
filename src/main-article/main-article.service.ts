@@ -9,6 +9,8 @@ import { FindOptionsWhere, Repository } from 'typeorm';
 import { MainArticle } from './entities/main-article.entity';
 import { CreateMainArticleDto } from './dto/create-main-article.dto';
 import { UpdateMainArticleDto } from './dto/update-main-article.dto';
+import { promises as fs } from 'fs';
+import * as path from 'path';
 
 @Injectable()
 export class MainArticleService {
@@ -169,6 +171,20 @@ export class MainArticleService {
       : updateArticleDto;
 
     try {
+      if (file) {
+        const mainArticle = await this.findOne(id)
+        const image = mainArticle.image
+        const filePath = path.join(__dirname, `../../${image}`);
+        async function deleteFile(filePath: string): Promise<void> {
+          try {
+            await fs.unlink(filePath);
+            console.log('Archivo eliminado exitosamente');
+          } catch (err) {
+            console.error('Error al eliminar el archivo:', err);
+          }
+        }
+        deleteFile(filePath);
+      }
       const result = await this.mainArticleRepository.update(
         id,
         updateMainArticleData,
@@ -200,6 +216,18 @@ export class MainArticleService {
     );
 
     try {
+      const mainArticle = await this.findOne(id)
+        const image = mainArticle.image
+        const filePath = path.join(__dirname, `../../${image}`);
+        async function deleteFile(filePath: string): Promise<void> {
+          try {
+            await fs.unlink(filePath);
+            console.log('Archivo eliminado exitosamente');
+          } catch (err) {
+            console.error('Error al eliminar el archivo:', err);
+          }
+        }
+        deleteFile(filePath);
       const result = await this.mainArticleRepository.delete(id);
       if (result.affected === 0) {
         throw new NotFoundException({

@@ -9,6 +9,8 @@ import { UpdateCursoDto } from './dto/update-curso.dto';
 import { Curso } from './entities/curso.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOptionsWhere, Repository } from 'typeorm';
+import { promises as fs } from 'fs';
+import * as path from 'path';
 
 @Injectable()
 export class CursosService {
@@ -17,7 +19,7 @@ export class CursosService {
   constructor(
     @InjectRepository(Curso)
     private cursoRepository: Repository<Curso>,
-  ) {}
+  ) { }
 
   async create(createCursoDto: CreateCursoDto, file: any): Promise<Curso> {
     this.logger.log(
@@ -135,6 +137,21 @@ export class CursosService {
       : updateCursoDto;
 
     try {
+      const curso = await this.findOne(id);
+
+      if (file) {
+        const video = curso.video
+        const filePath = path.join(__dirname, `../../${video}`);
+        async function deleteFile(filePath: string): Promise<void> {
+          try {
+            await fs.unlink(filePath);
+            console.log('Archivo eliminado exitosamente');
+          } catch (err) {
+            console.error('Error al eliminar el archivo:', err);
+          }
+        }
+        deleteFile(filePath);
+      }
       const result = await this.cursoRepository.update(id, updateCursoData);
       if (result.affected === 0) {
         throw new NotFoundException({
@@ -143,8 +160,10 @@ export class CursosService {
           statusCode: 404,
         });
       }
-      const curso = await this.findOne(id);
-      return curso;
+      const cursoEditado = await this.findOne(id);
+      
+      return cursoEditado;
+      
     } catch (error) {
       this.logger.error(
         `Error en Servicio: CursosService, Método: update, Args: ${JSON.stringify({ id, updateCursoDto, file })}, Error: ${error.message}`,
@@ -161,6 +180,21 @@ export class CursosService {
     this.logger.log(`Servicio: CursosService, Método: remove, Args: ${id}`);
 
     try {
+
+      const curso = await this.findOne(id)
+      const video = curso.video
+      const filePath = path.join(__dirname, `../../${video}`);
+      async function deleteFile(filePath: string): Promise<void> {
+        try {
+          await fs.unlink(filePath);
+          console.log('Archivo eliminado exitosamente');
+        } catch (err) {
+          console.error('Error al eliminar el archivo:', err);
+        }
+      }
+
+      deleteFile(filePath);
+
       const result = await this.cursoRepository.delete(id);
       if (result.affected === 0) {
         throw new NotFoundException({

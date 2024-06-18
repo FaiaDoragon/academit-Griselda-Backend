@@ -11,6 +11,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Article } from './entities/article.entity';
 import { FindOptionsWhere, Repository } from 'typeorm';
 import { ArticleResponseDto } from './dto/response-article.dto'; // Importa el DTO de respuesta
+import { promises as fs } from 'fs';
+import * as path from 'path';
 
 @Injectable()
 export class ArticlesService {
@@ -147,6 +149,21 @@ export class ArticlesService {
       : updateArticleDto;
 
     try {
+      const article = await this.findOne(id);
+
+      if (file) {
+        const image = article.image
+        const filePath = path.join(__dirname, `../../${image}`);
+        async function deleteFile(filePath: string): Promise<void> {
+          try {
+            await fs.unlink(filePath);
+            console.log('Archivo eliminado exitosamente');
+          } catch (err) {
+            console.error('Error al eliminar el archivo:', err);
+          }
+        }
+        deleteFile(filePath);
+      }
       const result = await this.articleRepository.update(id, articleData);
       if (result.affected === 0) {
         throw new NotFoundException({
@@ -155,8 +172,9 @@ export class ArticlesService {
           statusCode: 404,
         });
       }
-      const article = await this.findOne(id);
-      return article;
+      const articuloEditado = await this.findOne(id);
+
+      return articuloEditado;
     } catch (error) {
       this.logger.error(
         `Error en Servicio: ArticlesService, Método: update, Args: ${JSON.stringify({ id, updateArticleDto, file })}, Error: ${error.message}`,
@@ -173,6 +191,18 @@ export class ArticlesService {
     this.logger.log(`Servicio: ArticlesService, Método: remove, Args: ${id}`);
 
     try {
+      const article = await this.findOne(id)
+      const image = article.image
+        const filePath = path.join(__dirname, `../../${image}`);
+        async function deleteFile(filePath: string): Promise<void> {
+          try {
+            await fs.unlink(filePath);
+            console.log('Archivo eliminado exitosamente');
+          } catch (err) {
+            console.error('Error al eliminar el archivo:', err);
+          }
+        }
+        deleteFile(filePath);
       const result = await this.articleRepository.delete(id);
       if (result.affected === 0) {
         throw new NotFoundException({

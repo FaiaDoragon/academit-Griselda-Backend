@@ -9,6 +9,8 @@ import { Header } from './entities/header.entity';
 import { Repository, FindOptionsWhere } from 'typeorm';
 import { CreateHeaderItemDto } from './dto/create-header.dto';
 import { UpdateHeaderDto } from './dto/update-header.dto';
+import { promises as fs } from 'fs';
+import * as path from 'path';
 
 @Injectable()
 export class HeadersService {
@@ -17,7 +19,7 @@ export class HeadersService {
   constructor(
     @InjectRepository(Header)
     private headersRepository: Repository<Header>,
-  ) {}
+  ) { }
 
   async create(headerItemDto: CreateHeaderItemDto, file: any): Promise<Header> {
     this.logger.log(
@@ -120,6 +122,20 @@ export class HeadersService {
       : updateHeaderDto;
 
     try {
+      if (file) {
+        const header = await this.findOne(id)
+        const logo = header.logo
+        const filePath = path.join(__dirname, `../../${logo}`);
+        async function deleteFile(filePath: string): Promise<void> {
+          try {
+            await fs.unlink(filePath);
+            console.log('Archivo eliminado exitosamente');
+          } catch (err) {
+            console.error('Error al eliminar el archivo:', err);
+          }
+        }
+        deleteFile(filePath);
+      }
       const result = await this.headersRepository.update(id, updateHeaderData);
       if (result.affected === 0) {
         throw new NotFoundException(
@@ -145,6 +161,18 @@ export class HeadersService {
     this.logger.log(`Servicio: HeadersService, Método: remove, Args: ${id}`);
 
     try {
+      const header = await this.findOne(id)
+      const logo = header.logo
+        const filePath = path.join(__dirname, `../../${logo}`);
+        async function deleteFile(filePath: string): Promise<void> {
+          try {
+            await fs.unlink(filePath);
+            console.log('Archivo eliminado exitosamente');
+          } catch (err) {
+            console.error('Error al eliminar el archivo:', err);
+          }
+        }
+        deleteFile(filePath);
       const result = await this.headersRepository.delete(+id);
       if (result.affected === 0) {
         throw new NotFoundException(
