@@ -17,7 +17,7 @@ export class NewArticleService {
   constructor(
     @InjectRepository(NewArticle)
     private newArticleRepository: Repository<NewArticle>,
-  ) { }
+  ) {}
 
   async create(createNewArticleDto: CreateNewArticleDto): Promise<NewArticle> {
     this.logger.log(

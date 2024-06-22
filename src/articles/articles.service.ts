@@ -21,7 +21,7 @@ export class ArticlesService {
   constructor(
     @InjectRepository(Article)
     private articleRepository: Repository<Article>,
-  ) { }
+  ) {}
 
   // Método para mapear la entidad a DTO de respuesta
   private entityToResponseDto(article: Article): ArticleResponseDto {
@@ -106,8 +106,6 @@ export class ArticlesService {
     };
 
     return { data: Article, pagination };
-
-
   }
 
   async findOne(id: number): Promise<ArticleResponseDto> {
@@ -152,7 +150,7 @@ export class ArticlesService {
       const article = await this.findOne(id);
 
       if (file) {
-        const image = article.image
+        const image = article.image;
         const filePath = path.join(__dirname, `../../${image}`);
         async function deleteFile(filePath: string): Promise<void> {
           try {
@@ -191,18 +189,18 @@ export class ArticlesService {
     this.logger.log(`Servicio: ArticlesService, Método: remove, Args: ${id}`);
 
     try {
-      const article = await this.findOne(id)
-      const image = article.image
-        const filePath = path.join(__dirname, `../../${image}`);
-        async function deleteFile(filePath: string): Promise<void> {
-          try {
-            await fs.unlink(filePath);
-            console.log('Archivo eliminado exitosamente');
-          } catch (err) {
-            console.error('Error al eliminar el archivo:', err);
-          }
+      const article = await this.findOne(id);
+      const image = article.image;
+      const filePath = path.join(__dirname, `../../${image}`);
+      async function deleteFile(filePath: string): Promise<void> {
+        try {
+          await fs.unlink(filePath);
+          console.log('Archivo eliminado exitosamente');
+        } catch (err) {
+          console.error('Error al eliminar el archivo:', err);
         }
-        deleteFile(filePath);
+      }
+      deleteFile(filePath);
       const result = await this.articleRepository.delete(id);
       if (result.affected === 0) {
         throw new NotFoundException({

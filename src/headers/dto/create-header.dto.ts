@@ -50,4 +50,4 @@ export class CreateHeaderItemDto {
   logo?: string;
 }
 
-export class UpdateHeaderDto extends CreateHeaderItemDto { }
+export class UpdateHeaderDto extends CreateHeaderItemDto {}

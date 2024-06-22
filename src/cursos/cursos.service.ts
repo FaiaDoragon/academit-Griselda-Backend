@@ -19,7 +19,7 @@ export class CursosService {
   constructor(
     @InjectRepository(Curso)
     private cursoRepository: Repository<Curso>,
-  ) { }
+  ) {}
 
   async create(createCursoDto: CreateCursoDto, file: any): Promise<Curso> {
     this.logger.log(
@@ -95,7 +95,6 @@ export class CursosService {
     };
 
     return { data: cursos, pagination };
-
   }
 
   async findOne(id: number): Promise<Curso> {
@@ -140,7 +139,7 @@ export class CursosService {
       const curso = await this.findOne(id);
 
       if (file) {
-        const video = curso.video
+        const video = curso.video;
         const filePath = path.join(__dirname, `../../${video}`);
         async function deleteFile(filePath: string): Promise<void> {
           try {
@@ -161,9 +160,8 @@ export class CursosService {
         });
       }
       const cursoEditado = await this.findOne(id);
-      
+
       return cursoEditado;
-      
     } catch (error) {
       this.logger.error(
         `Error en Servicio: CursosService, Método: update, Args: ${JSON.stringify({ id, updateCursoDto, file })}, Error: ${error.message}`,
@@ -180,9 +178,8 @@ export class CursosService {
     this.logger.log(`Servicio: CursosService, Método: remove, Args: ${id}`);
 
     try {
-
-      const curso = await this.findOne(id)
-      const video = curso.video
+      const curso = await this.findOne(id);
+      const video = curso.video;
       const filePath = path.join(__dirname, `../../${video}`);
       async function deleteFile(filePath: string): Promise<void> {
         try {

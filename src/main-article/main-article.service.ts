@@ -19,7 +19,7 @@ export class MainArticleService {
   constructor(
     @InjectRepository(MainArticle)
     private mainArticleRepository: Repository<MainArticle>,
-  ) { }
+  ) {}
 
   async create(
     mainArticleDto: CreateMainArticleDto,
@@ -58,7 +58,7 @@ export class MainArticleService {
   }
 
   async findAll(
-    page: number, 
+    page: number,
     limit: number,
     searchParams?: { [key: string]: string },
   ): Promise<{
@@ -81,11 +81,13 @@ export class MainArticleService {
       });
     }
 
-    const [mainArticles, total] = await this.mainArticleRepository.findAndCount({
-      where,
-      skip: (+page - 1) * limit,
-      take: limit,
-    });
+    const [mainArticles, total] = await this.mainArticleRepository.findAndCount(
+      {
+        where,
+        skip: (+page - 1) * limit,
+        take: limit,
+      },
+    );
 
     if (mainArticles.length === 0) {
       throw new NotFoundException('No se encontraron encabezados.');
@@ -98,7 +100,6 @@ export class MainArticleService {
     };
 
     return { data: mainArticles, pagination };
-
 
     // try {
     //   const mainArticles = await this.mainArticleRepository.find({
@@ -172,8 +173,8 @@ export class MainArticleService {
 
     try {
       if (file) {
-        const mainArticle = await this.findOne(id)
-        const image = mainArticle.image
+        const mainArticle = await this.findOne(id);
+        const image = mainArticle.image;
         const filePath = path.join(__dirname, `../../${image}`);
         async function deleteFile(filePath: string): Promise<void> {
           try {
@@ -216,18 +217,18 @@ export class MainArticleService {
     );
 
     try {
-      const mainArticle = await this.findOne(id)
-        const image = mainArticle.image
-        const filePath = path.join(__dirname, `../../${image}`);
-        async function deleteFile(filePath: string): Promise<void> {
-          try {
-            await fs.unlink(filePath);
-            console.log('Archivo eliminado exitosamente');
-          } catch (err) {
-            console.error('Error al eliminar el archivo:', err);
-          }
+      const mainArticle = await this.findOne(id);
+      const image = mainArticle.image;
+      const filePath = path.join(__dirname, `../../${image}`);
+      async function deleteFile(filePath: string): Promise<void> {
+        try {
+          await fs.unlink(filePath);
+          console.log('Archivo eliminado exitosamente');
+        } catch (err) {
+          console.error('Error al eliminar el archivo:', err);
         }
-        deleteFile(filePath);
+      }
+      deleteFile(filePath);
       const result = await this.mainArticleRepository.delete(id);
       if (result.affected === 0) {
         throw new NotFoundException({

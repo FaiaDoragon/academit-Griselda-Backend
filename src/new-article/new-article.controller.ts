@@ -62,7 +62,7 @@ export class NewArticleController {
   @ApiNotFoundResponse({ description: 'No se encontraron artículos.' })
   @ApiBadRequestResponse({ description: 'Solicitud incorrecta.' })
   findAll(
-    @Query('page') page: number = 1, 
+    @Query('page') page: number = 1,
     @Query('limit') limit: number = 5,
     @Query() searchParams: { [key: string]: string },
   ) {
