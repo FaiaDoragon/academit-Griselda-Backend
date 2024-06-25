@@ -29,7 +29,6 @@ import {
   ApiParam,
 } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { query } from 'express';
 
 @ApiTags('Artículos')
 @Controller('articulos')
