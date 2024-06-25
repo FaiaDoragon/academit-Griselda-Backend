@@ -14,6 +14,9 @@ export class MainArticle {
   @Column('varchar', { name: 'textoBoton', length: 100 })
   textButton: string;
 
+  @Column('varchar', { name: 'NavegacionBoton', length: 100 })
+  NavegacionBoton: string;
+
   @Column('varchar', { name: 'imagen', nullable: true })
   image: string;
 
