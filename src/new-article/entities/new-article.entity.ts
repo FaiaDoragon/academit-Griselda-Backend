@@ -11,6 +11,9 @@ export class NewArticle {
   @Column('varchar', { name: 'titulo_articulo', length: 100 })
   articletitle: string;
 
+  @Column('varchar', { name: 'NavegacionArticleTitle', length: 100 })
+  NavegacionArticleTitle: string;
+
   @Column('varchar', { name: 'descripcion', length: 400 })
   description: string;
 
