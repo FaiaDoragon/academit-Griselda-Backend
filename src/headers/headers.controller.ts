@@ -27,11 +27,12 @@ import {
   ApiQuery,
 } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { HeaderResponseDto } from './dto/response-header.dto';
 
 @ApiTags('Headers')
 @Controller('headers')
 export class HeadersController {
-  constructor(private readonly headersService: HeadersService) {}
+  constructor(private readonly headersService: HeadersService) { }
 
   @Post()
   @UseInterceptors(FileInterceptor('logo'))
@@ -40,7 +41,10 @@ export class HeadersController {
     description:
       'Crea un nuevo header con los datos proporcionados y opcionalmente un logo.',
   })
-  @ApiCreatedResponse({ description: 'El header se ha creado exitosamente.' })
+  @ApiCreatedResponse({ 
+    description: 'El header se ha creado exitosamente.', 
+    type: HeaderResponseDto 
+  })
   @ApiBadRequestResponse({
     description:
       'Solicitud incorrecta. Por favor, revisa tus datos de entrada.',
@@ -89,6 +93,7 @@ export class HeadersController {
   })
   @ApiOkResponse({
     description: 'Todos los headers se han recuperado exitosamente.',
+    type: [HeaderResponseDto]
   })
   @ApiNotFoundResponse({ description: 'No se encontraron headers.' })
   @ApiBadRequestResponse({ description: 'Solicitud incorrecta.' })
@@ -105,7 +110,7 @@ export class HeadersController {
     summary: 'Obtener un header por ID',
     description: 'Recupera un header específico usando su ID.',
   })
-  @ApiOkResponse({ description: 'El header se ha recuperado exitosamente.' })
+  @ApiOkResponse({ description: 'El header se ha recuperado exitosamente.', type: HeaderResponseDto })
   @ApiNotFoundResponse({ description: 'Header no encontrado.' })
   @ApiBadRequestResponse({ description: 'Solicitud incorrecta.' })
   findOne(@Param('id') id: number) {
