@@ -34,7 +34,7 @@ export class CreateHeaderItemDto {
   })
   @IsOptional()
   @IsString()
-  NavegacionIitem02?: string;
+  NavegacionItem02?: string;
 
   @ApiProperty({
     description: 'Texto opcional para el tercer elemento del header',
@@ -54,7 +54,7 @@ export class CreateHeaderItemDto {
   })
   @IsOptional()
   @IsString()
-  NavegacionIitem03?: string;
+  NavegacionItem03?: string;
 
   @ApiProperty({
     description: 'Texto opcional para el cuarto elemento del header',
@@ -74,7 +74,7 @@ export class CreateHeaderItemDto {
   })
   @IsOptional()
   @IsString()
-  NavegacionIitem04?: string;
+  NavegacionItem04?: string;
 
   @ApiProperty({
     description: 'URL de la imagen del logo del header. Opcional.',
@@ -86,5 +86,3 @@ export class CreateHeaderItemDto {
   @IsUrl()
   logo?: string;
 }
-
-export class UpdateHeaderDto extends CreateHeaderItemDto {}
