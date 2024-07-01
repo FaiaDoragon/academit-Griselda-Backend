@@ -15,19 +15,19 @@ export class Header {
   item02: string;
 
   @Column('varchar', { name: 'NavegacionIitem02', length: 100 })
-  NavegacionIitem02: string;
+  NavegacionItem02: string;
 
   @Column('varchar', { name: 'item3', length: 100 })
   item03: string;
 
   @Column('varchar', { name: 'NavegacionIitem03', length: 100 })
-  NavegacionIitem03: string;
+  NavegacionItem03: string;
 
   @Column('varchar', { name: 'item4', length: 100 })
   item04: string;
 
   @Column('varchar', { name: 'NavegacionIitem04', length: 100 })
-  NavegacionIitem04: string;
+  NavegacionItem04: string;
 
   @Column('varchar', { name: 'logo', nullable: true })
   logo: string | null;

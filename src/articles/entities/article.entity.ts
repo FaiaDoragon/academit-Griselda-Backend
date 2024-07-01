@@ -8,6 +8,9 @@ export class Article {
   @Column('varchar', { name: 'titulo', length: 100 })
   title: string;
 
+  @Column('varchar', { name: 'NavegacionTitulo', length: 100 })
+  NavegacionTitle: string;
+
   @Column('varchar', { name: 'descripcion', length: 400 })
   description: string;
 
