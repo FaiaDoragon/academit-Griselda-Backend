@@ -14,7 +14,8 @@ import { NewArticle } from './new-article/entities/new-article.entity';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { CursosModule } from './cursos/cursos.module';
-import { Curso } from './cursos/entities/curso.entity';
+import { entites } from "./shared/entities";
+
 
 @Module({
   imports: [
@@ -34,7 +35,7 @@ import { Curso } from './cursos/entities/curso.entity';
           username: configService.get<string>('DB_USERNAME'),
           password: configService.get<string>('DB_PASSWORD'),
           database: configService.get<string>('DB_NAME'),
-          entities: [Header, Article, MainArticle, NewArticle, Curso],
+          entities: [Header, Article, MainArticle, NewArticle,...entites],
           synchronize: isDevelopment,
           // logging: isDevelopment ? 'all' : ['error'], // Solo loguea todos los queries en desarrollo
           retryAttempts: 5, // Intentos de reintento en caso de fallo de conexión

@@ -1,138 +1,75 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  UploadedFile,
-  UseInterceptors,
-  Query,
-} from '@nestjs/common';
-import { CursosService } from './cursos.service';
+import { Body, Controller, Get, Post, UploadedFiles, UseInterceptors, BadRequestException, Query, Logger } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiConsumes, ApiBody } from '@nestjs/swagger';
+import { CursosService } from './servicio/cursos.service';
 import { CreateCursoDto } from './dto/create-curso.dto';
-import { UpdateCursoDto } from './dto/update-curso.dto';
-import { FileInterceptor } from '@nestjs/platform-express';
-import {
-  ApiTags,
-  ApiOperation,
-  ApiCreatedResponse,
-  ApiOkResponse,
-  ApiNotFoundResponse,
-  ApiNoContentResponse,
-  ApiBadRequestResponse,
-  ApiInternalServerErrorResponse,
-  ApiBody,
-  ApiConsumes,
-} from '@nestjs/swagger';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
+import { plainToInstance } from 'class-transformer';
+import { validate } from 'class-validator';
 
 @ApiTags('Cursos')
 @Controller('cursos')
 export class CursosController {
+  private readonly logger = new Logger(CursosController.name);
+
   constructor(private readonly cursosService: CursosService) {}
 
-  @Post()
-  @UseInterceptors(FileInterceptor('video'))
-  @ApiOperation({
-    summary: 'Crear un nuevo curso',
-    description:
-      'Crea un nuevo curso con los datos proporcionados y opcionalmente un video.',
-  })
-  @ApiCreatedResponse({ description: 'El curso se ha creado exitosamente.' })
-  @ApiBadRequestResponse({
-    description:
-      'Solicitud incorrecta. Por favor, revisa tus datos de entrada.',
-  })
-  @ApiInternalServerErrorResponse({
-    description:
-      'Error interno del servidor. Por favor, intenta nuevamente más tarde.',
-  })
+  @Get('/')
+  @ApiOperation({ summary: 'Obtener todos los cursos', description: 'Retorna una lista de todos los cursos disponibles.' })
+  @ApiResponse({ status: 200, description: 'Lista de cursos obtenida exitosamente.' })
+  async obtenerCursos(@Query('pagina') pagina: number = 1, @Query('tamaño') tamaño: number = 10) {
+    this.logger.log(`Obteniendo cursos - Página: ${pagina}, Tamaño: ${tamaño}`);
+    const result = await this.cursosService.obtenerTodos(pagina, tamaño);
+    this.logger.log('Cursos obtenidos exitosamente');
+    return result;
+  }
+
+  @Post('/')
+  @ApiOperation({ summary: 'Crear un nuevo curso', description: 'Crea un nuevo curso con los detalles proporcionados.' })
+  @ApiResponse({ status: 201, description: 'Curso creado exitosamente.' })
+  @ApiResponse({ status: 400, description: 'Datos de entrada no válidos.' })
   @ApiConsumes('multipart/form-data')
   @ApiBody({
-    description: 'Datos del curso y su video',
+    description: 'Los detalles del nuevo curso y los archivos de videos y materiales.',
     type: CreateCursoDto,
     required: true,
   })
-  create(
-    @Body() createCursoDto: CreateCursoDto,
-    @UploadedFile() file: Express.Multer.File,
-  ) {
-    return this.cursosService.create(createCursoDto, file);
-  }
+  @UseInterceptors(FileFieldsInterceptor([
+    { name: 'videosFiles', maxCount: 10 },
+    { name: 'materialesFiles', maxCount: 10 }
+  ], {
+    storage: diskStorage({
+      destination: './uploads',
+      filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, `${file.fieldname}-${uniqueSuffix}${extname(file.originalname)}`);
+      }
+    }),
+  }))
+  async crearCurso(@UploadedFiles() files: { videosFiles?: Express.Multer.File[], materialesFiles?: Express.Multer.File[] }, @Body() body: any) {
+    this.logger.log('Creando un nuevo curso');
+    const videos = body.videos ? JSON.parse(body.videos) : [];
+    const materiales = body.materiales ? JSON.parse(body.materiales) : [];
 
-  @Get()
-  @ApiOperation({
-    summary: 'Obtener todos los cursos',
-    description: 'Recupera una lista de todos los cursos existentes.',
-  })
-  @ApiOkResponse({
-    description: 'Todos los cursos se han recuperado exitosamente.',
-  })
-  @ApiNotFoundResponse({ description: 'No se encontraron cursos.' })
-  @ApiBadRequestResponse({ description: 'Solicitud incorrecta.' })
-  findAll(
-    @Query('page') page: number = 1,
-    @Query('limit') limit: number = 5,
-    @Query() searchParams: { [key: string]: string },
-  ) {
-    return this.cursosService.findAll(page, limit, searchParams);
-  }
+    const createCursoDto = plainToInstance(CreateCursoDto, {
+      ...body,
+      estado: body.estado === 'true' || body.estado === true,
+      videos,
+      materiales
+    });
 
-  @Get(':id')
-  @ApiOperation({
-    summary: 'Obtener un curso por ID',
-    description: 'Recupera un curso específico usando su ID.',
-  })
-  @ApiOkResponse({ description: 'El curso se ha recuperado exitosamente.' })
-  @ApiNotFoundResponse({ description: 'Curso no encontrado.' })
-  @ApiBadRequestResponse({ description: 'Solicitud incorrecta.' })
-  findOne(@Param('id') id: number) {
-    return this.cursosService.findOne(id);
-  }
+    createCursoDto.videosFiles = files.videosFiles || [];
+    createCursoDto.materialesFiles = files.materialesFiles || [];
 
-  @Patch(':id')
-  @UseInterceptors(FileInterceptor('video'))
-  @ApiOperation({
-    summary: 'Actualizar un curso',
-    description:
-      'Actualiza los datos de un curso existente y opcionalmente su video.',
-  })
-  @ApiOkResponse({ description: 'El curso se ha actualizado exitosamente.' })
-  @ApiNotFoundResponse({ description: 'Curso no encontrado.' })
-  @ApiBadRequestResponse({
-    description:
-      'Solicitud incorrecta. Por favor, revisa tus datos de entrada.',
-  })
-  @ApiInternalServerErrorResponse({
-    description:
-      'Error interno del servidor. Por favor, intenta nuevamente más tarde.',
-  })
-  @ApiConsumes('multipart/form-data')
-  @ApiBody({
-    description: 'Datos actualizados del curso y su video',
-    type: UpdateCursoDto,
-    required: true,
-  })
-  update(
-    @Param('id') id: number,
-    @Body() updateCursoDto: UpdateCursoDto,
-    @UploadedFile() file: Express.Multer.File,
-  ) {
-    return this.cursosService.update(id, updateCursoDto, file);
-  }
+    const errors = await validate(createCursoDto);
+    if (errors.length > 0) {
+      this.logger.error('Error en la validación de los datos del curso', errors.toString());
+      throw new BadRequestException('Validation failed', errors.toString());
+    }
 
-  @Delete(':id')
-  @ApiOperation({
-    summary: 'Eliminar un curso',
-    description: 'Elimina un curso existente usando su ID.',
-  })
-  @ApiNoContentResponse({
-    description: 'El curso se ha eliminado exitosamente.',
-  })
-  @ApiNotFoundResponse({ description: 'Curso no encontrado.' })
-  @ApiBadRequestResponse({ description: 'Solicitud incorrecta.' })
-  remove(@Param('id') id: number) {
-    return this.cursosService.remove(id);
+    const result = await this.cursosService.crearCursos(createCursoDto, createCursoDto.videosFiles, createCursoDto.materialesFiles);
+    this.logger.log('Curso creado exitosamente');
+    return result;
   }
 }
